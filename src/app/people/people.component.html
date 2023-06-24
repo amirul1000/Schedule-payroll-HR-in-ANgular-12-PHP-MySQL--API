@@ -1,0 +1,1033 @@
+
+<style>
+    .btn-primary,.btn-danger{
+      color:none  !important;
+      background-color: #3d1cba;
+    }
+    .btn-primary,.btn-danger:hover{
+      color:none  !important;
+      background-color: #3d1cba;
+    }
+    .btn-primary,.btn-danger:active {
+      color:none  !important;
+      background-color: #3d1cba !important;
+    }
+    .modal-dialog {
+       max-width: 600px !important;
+      }    
+</style>
+
+  <div class="container">
+      <div class="row">
+        <div class="col col-md-10">
+          <input type="search" [(ngModel)]="searchText" placeholder="Search">
+        </div>
+        <div class="col col-md-2">
+          <div ngbDropdown class="dropdown">
+              <button ngbDropdownToggle class="btn btn-primary" type="button" id="dropdownMenuButton2" aria-expanded="false">
+                <i class="bi bi-plus-square"></i>Add People  <span class="caret"></span>
+              </button>
+              <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton2">
+                <li><button type="button" class="btn" (click)="showSingleModal()">Add single person</button></li>
+                <li><button type="button" class="btn" (click)="showMember()">Add / import multiple people</button></li>
+                <!--<li><button type="button" class="btn">Import via integration</button></li> -->
+                <li><button type="button" class="btn" (click)="showModalCSV()">Advanced csv import(Employee)</button></li>
+                <li><button type="button" class="btn" (click)="showModalLeaveCSV()">Advanced csv import(Leave)</button></li>               
+              </ul>
+          </div>
+        </div>
+        </div>
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col"><b>Name</b></div>
+                  <div class="col"><b>Access</b></div>
+                  <div class="col"><b>Main Location</b></div>
+                  <div class="col"><b>Email</b></div>
+                  <div class="col"><b>Stress Profile	</b></div>
+                  <div class="col"><b>Pay Rates</b></div>
+              </div>
+              <div class="row border" style="height: 80px;text-align: center;" *ngFor="let user of people|filter:searchText; let i=index">
+                  <div class="col"> <img [src]="user.file_picture?user.file_picture:defaultImg" class="rounded-circle" style="width: 50px;height: 50px;" alt="">     
+                                  <a (click)="showPayroll(user.id,user);" class="wa-link">  {{user.first_name}} {{user.last_name}}</a>
+                                  
+                                  </div>
+                  <div class="col">{{user.user_type}}</div>
+                  <div class="col"></div>
+                  <div class="col">{{user.email}}</div>
+                  <div class="col">                      
+                      <span *ngIf="user.payroll.length>0">
+                        Weekday: $ {{user.payroll[0].weekday_rate}}<br>
+                        Saturday:  $ {{user.payroll[0].saterday_rate}}<br>
+                        Sunday: $ {{user.payroll[0].sunday_rate}}<br>
+                        Public Holiday: $ {{user.payroll[0].public_holiday_rate}}
+                      </span>
+                    </div>
+                  <div class="col">
+                    <div style="display: inline-block;text-align: center;">
+                      <div ngbDropdown class="dropdown" style="float:right;margin-left: 3px;">
+                          <button ngbDropdownToggle class="btn btn-default" type="button" id="dropdownMenuButton1" aria-expanded="false">
+                              <i class="bi bi-three-dots"></i>
+                          </button>                        
+                          <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                            <li><button type="button" class="btn"  (click)="updateTeamMember(user.id)">Edit</button></li>
+                            <li><button type="button" class="btn" (click)="archiveTeamMember(user.id)" >Archive Team member</button></li>
+                            <li><button type="button" class="btn" >Resend invitation</button></li>
+                          </ul>
+                      </div>
+                    </div>
+
+                  </div>
+              </div>
+        </div> 
+    </div>    
+  </div>
+
+
+
+
+<!--Add a single person-->
+   <!-- The Modal -->
+   <div class="modal" id="modalMember"  [style.display]="showSingleMemberModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add Team member
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideSingleMember()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="form-group">
+               <div class="row">
+                   <div class="col col-md-3">First name</div>
+                   <div class="col"> <input type="text"  [(ngModel)]="first_name" id="first_name" class="form-control"></div>
+               </div>
+              </div> 
+              <div class="form-group">
+               <div class="row">
+                <div class="col col-md-3">Last name</div>
+                <div class="col"><input type="text"  [(ngModel)]="last_name" id="last_name" class="form-control"></div>
+               </div>
+               </div>
+
+
+              <div class="form-group">
+               <div class="row">
+                <div class="col col-md-3">Main Location</div>
+                <div class="col"> <ng-multiselect-dropdown  
+                  [placeholder]="'Select a Location'"
+                  [settings]="dropdownSettingsMemLoc"
+                  [data]="dropdownListMemLoc"
+                  [(ngModel)]="selectedItemsMemLoc"
+                  (onSelect)="onItemSelect($event)"
+                  (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                  </ng-multiselect-dropdown></div>
+               </div>
+               </div>
+
+
+              <div class="form-group">
+               <div class="row">
+                <div class="col col-md-3">Mobile</div>
+                <div class="col"><input type="text"  [(ngModel)]="phone_no" id="phone_no"  class="form-control"></div>
+                </div>
+              </div>
+
+               <div class="form-group">
+                <div class="row">
+                  <div class="col col-md-3">Email</div>
+                  <div class="col"><input type="text"  [(ngModel)]="email" id="email"  class="form-control"></div>
+                  </div>
+
+                </div>
+                <div class="form-group">
+                <div class="row">
+                  <div class="col col-md-3">Access level</div>
+                  <div class="col">
+                     <ng-multiselect-dropdown  
+                    [placeholder]="'Select an access Level'"
+                    [settings]="dropdownSettingsAccess"
+                    [data]="dropdownListAccess"
+                    [(ngModel)]="selectedItemsAccess"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                    </ng-multiselect-dropdown>
+                 </div>
+                 </div>
+                </div> 
+                
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideSingleMember()">Close</button>
+          <input type="hidden"  [(ngModel)]="users_id">
+          <button type="button" class="btn btn-primary"  (click)="saveSingleMember()"><span *ngIf="selected_users_id>0">Update</span> <span *ngIf="selected_users_id==''">Save</span> </button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+<!-- Add a single person//-->
+
+
+<!--Add a Multiple person-->
+<!-- The Modal -->
+<div class="modal" id="modalMember"  [style.display]="showMemberModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add new Team member
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"  (click)="hideMember()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            Choose a location for your new people and then add as many as you want by typing their names and email addresses. You can always edit someone's details later, so don't worry if you can't remember everything.
+           
+            <div class="row">
+            <div class="col-md-6"> 
+              <label for="area_name" class="col-md-12 control-label">Location</label>
+              <div class="col-md-12">     
+                <ng-multiselect-dropdown  
+                  [placeholder]="'Select a Location'"
+                  [settings]="dropdownSettingsMemLoc"
+                  [data]="dropdownListMemLoc"
+                  [(ngModel)]="selectedItemsMemLoc"
+                  (onSelect)="onItemSelect($event)"
+                  (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                  </ng-multiselect-dropdown>
+
+
+              </div>   
+          </div> 
+        </div>
+
+        <div class="form-group">  
+            <div class="row">
+               
+              <div class="col">
+                <div class="row">
+                  <div class="col">
+                   First Name
+                    </div>
+                  <div class="col">
+                  Last Name
+                  </div>
+                  <div class="col">
+                    Email
+                  </div>
+                  <div class="col">
+                    Phone No
+                  </div>
+                  <div class="col">                      
+                  </div>
+                </div>
+              </div>
+              </div> 
+          </div>     
+
+            <div [formGroup]="productForm2"> 
+              <div  formArrayName="quantities2">
+              <div  *ngFor="let quantity of quantities2().controls; let i=index" [formGroupName]="i">  
+                <div class="form-group"> 
+                <div class="row">
+               
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                    <input type="text"  formControlName="first_name" id="first_name" style="width: 100px;">
+                    </div>
+                    <div class="col">
+                      <input type="text"  formControlName="last_name" id="last_name" style="width: 100px;">
+                      </div>
+                    <div class="col">
+                      <input type="text"  formControlName="email" id="email"  style="width: 80px;">
+                    </div>
+                    <div class="col">
+                      <input type="text"  formControlName="phone_no" id="phone_no"  style="width: 80px;">
+                    </div>
+                    <div class="col">
+                      <button (click)="removeQuantity2(i)"><i class="bi bi-trash3"></i></button>  
+                    </div>
+                  </div>
+                </div>
+                </div> 
+               
+              </div>
+            </div>
+          </div> 
+          </div>   
+
+          <div class="row">
+            <div class="col">
+              <button class="btn"  (click)="addQuantity2()"><i class="bi bi-plus"></i></button>
+            </div>
+           </div>   
+    
+        
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideMember()">Close</button>
+        <button type="button" class="btn btn-primary"  (click)="saveMultipleMember()">Save</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!--Add a Multiple person//-->
+
+
+
+  
+
+
+<!--CSV Import-->
+<!-- The Modal -->
+<div class="modal" id="modalMember"  [style.display]="showCSVModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">CSV Import
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"  (click)="hidecsv()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6"> 
+                  <label for="area_name" class="col-md-12 control-label">Location</label>
+                  <div class="col-md-12">     
+                    <ng-multiselect-dropdown  
+                      [placeholder]="'Select a Location'"
+                      [settings]="dropdownSettingsMemLoc2"
+                      [data]="dropdownListMemLoc2"
+                      [(ngModel)]="selectedItemsMemLoc2"
+                      (onSelect)="onItemSelect($event)"
+                      (onSelectAll)="onSelectAll($event)" name="fieldName2" ngDefaultControl>
+                      </ng-multiselect-dropdown>
+    
+    
+                  </div>   
+              </div> 
+            </div>
+          </div>
+            
+            <div class="form-group">
+              <div class="row">
+               <div class="col"><input type="file" formControlName="file_csv"  [(ngModel)]="file_csv" id="csv"  (change)="onFileChange($event)" class="form-control"></div>
+               </div>
+            </div> 
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hidecsv()">Close</button>
+        <button type="button" class="btn btn-primary"  (click)="uploadCSV()">Upload</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!--Add a Multiple person//-->
+
+
+<!--Employee PayRoll-->
+<!-- The Modal -->
+<div class="modal" id="modalPayroll"  [style.display]="showmodalPayroll ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Pay Roll</h4>         
+        <button type="button" class="close" data-dismiss="modal"  (click)="hidePayroll()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">     
+              <div class="row">
+                <div class="col">
+                  <img [src]="employee.file_picture?employee.file_picture:defaultImg" class="rounded-circle" style="width: 50px;height:50px;" alt=""> 
+                  {{employee.first_name}} {{employee.last_name}}<br>
+                  {{employee.email}}
+                </div>
+              </div>       
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="pay-tab" data-bs-toggle="tab" data-bs-target="#pay" type="button" role="tab" aria-controls="pay" aria-selected="true"  (click)="tabButton(1)">Pay</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="leave-tab" data-bs-toggle="tab" data-bs-target="#leave" type="button" role="tab" aria-controls="leave" aria-selected="false" (click)="tabButton(2)">Leave</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="training-tab" data-bs-toggle="tab" data-bs-target="#training" type="button" role="tab" aria-controls="training" aria-selected="false"  (click)="tabButton(3)">Training</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="unavailability-tab" data-bs-toggle="tab" data-bs-target="#unavailability" type="button" role="tab" aria-controls="unavailability" aria-selected="false"  (click)="tabButton(4)">Unavailability</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="upload_picture-tab" data-bs-toggle="tab" data-bs-target="#upload_picture" type="button" role="tab" aria-controls="upload_picture" aria-selected="false"  (click)="tabButton(5)">Upload Picture</button>
+                </li>
+              </ul>              
+              <div class="tab-content" id="myTabContent">
+                
+              
+                  <!--Pay-->
+                  <div class="tab-pane fade show active" id="pay"  role="tabpanel" aria-labelledby="pay-tab">
+            
+                    <div class="card">
+                      <div class="card-body">
+                        <h1>Work details</h1>
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Access Level
+                          </div>
+                          <div class="col">
+                            <ng-multiselect-dropdown  
+                            [placeholder]="'Select an access Level'"
+                            [settings]="dropdownSettingsAccess"
+                            [data]="dropdownListAccess"
+                            [(ngModel)]="selectedItemsAccess1"
+                            (onSelect)="onItemSelect($event)"
+                            (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                            </ng-multiselect-dropdown>
+                          </div>
+                          </div>
+                        </div> 
+
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Works At (Department)
+                          </div>
+                          <div class="col">
+                            <ng-multiselect-dropdown  
+                              [placeholder]="'Select locations'"
+                              [settings]="dropdownSettingsLocation"
+                              [data]="dropdownListLocation"
+                              [(ngModel)]="selectedItemsLocation"
+                              (onSelect)="onItemSelect($event)"
+                              (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                              </ng-multiselect-dropdown>
+                          </div>
+                          </div>
+                        </div> 
+
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Hired On
+                          </div>
+                          <div class="col">
+                            <input class="form-control calendar"   [(ngModel)]="employee_start_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d2="ngbDatepicker" (click)="d2.toggle()" (navigate)="date = $event.next" > 
+                          </div>
+                          </div>
+                        </div> 
+
+                        <h1>Stress profile</h1>
+                        Scheduling rules such as maximum or minimum hours.  
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Stress profile
+                          </div>
+                          <div class="col">
+                            <select  [(ngModel)]="stress_profile"  class="form-control">
+                              <option value="24/7">24/7</option>
+                              <option value="2 days per week">2 days per week</option>
+                              <option value="CA overtime  40hrs per week,8 hrs per days,max 6 days per week">CA overtime  40hrs per week,8 hrs per days,max 6 days per week</option>
+                              <option value="Max 20 hrs per week">Max 20 hrs per week</option>
+                              <option value="Normal 38 hrs per week">Normal 38 hrs per week</option>
+                              <option value="Standard 40 hrs,8 hrs per day">Standard 40 hrs,8 hrs per day</option>
+                            </select>
+                            </div>
+                          </div>
+                        </div>  
+
+
+                      
+                        <h1>Pay details</h1>
+
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Employeement type
+                          </div>
+                          <div class="col">
+                            <select [(ngModel)]="employeement_type"  class="form-control">
+                              <option value="Full time">Full time</option>
+                              <option value="Part time">Part time</option>
+                              <option value="Casual">Casual</option>
+                            </select>
+                          </div>
+                          </div>
+                        </div> 
+
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Pay rate
+                          </div>
+                          <div class="col">
+                            <select  [(ngModel)]="pay_rate_type"  class="form-control" (change)="payRate()">
+                              <option value="Hourly">Hourly</option>
+                              <!--<option value="Hourly (1.5 x Overtime)">Hourly (1.5 x Overtime)</option>-->
+                              <option value="Salary">Salary</option>
+                              <!--<option value="Hourly (44 h + 1.5 x Overtime)">Hourly (44 h + 1.5 x Overtime)</option>-->
+                              <option value="Rates per Day">Rates per Day</option>
+                            </select>
+
+                          <div [(ngModel)]="Hourly" id="Hourly" [style.display]="Hourly ? 'block' : 'none'">
+                            <div class="row">
+                                <div class="col">
+                                  <label>Weekday Rate</label>
+                                  <input  type="text" [(ngModel)]="weekday_rate" class="form-control">
+                                </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Saterday Rate</label>
+                                <input type="text" [(ngModel)]="saterday_rate" class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Sunday Rate</label>
+                                <input type="text" [(ngModel)]="sunday_rate" class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                            <div class="col">
+                              <label>Public Holiday Rate</label>
+                              <input type="text" [(ngModel)]="holiday_rate" class="form-control">
+                            </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Overtime Rate</label>
+                              <input type="text" [(ngModel)]="overtime_rate" class="form-control">
+                            </div>
+                          </div>  
+                          </div>
+                          <div [(ngModel)]="Hourly_1_5_x_Overtime" id="Hourly_(1.5_x_Overtime)"  [style.display]="Hourly_1_5_x_Overtime ? 'block' : 'none'">
+                            <div class="row">
+                              <div class="col">
+                                <label>Hourly Rate</label>
+                                <input type="text" [(ngModel)]="hourly_rate" class="form-control">
+                              </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Holiday Rate</label>
+                              <input type="text" [(ngModel)]="holiday_rate" class="form-control">
+                            </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Overtime Rate</label>
+                              <input type="text" [(ngModel)]="overtime_rate" class="form-control">
+                            </div>
+                          </div> 
+                          </div>
+                          <div [(ngModel)]="Salary" id="Salary"    [style.display]="Salary ? 'block' : 'none'">
+                            <div class="row">
+                              <div class="col">
+                                <label>Salary Type</label>
+                                <select type="text" [(ngModel)]="salary_type" class="form-control">
+                                  <option>Monthly</option>
+                                  <option>Weekly</option>
+                                  </select>
+                              </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Salary Amount</label>
+                              <input type="text" [(ngModel)]="salary_amount" class="form-control">
+                            </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Overtime Rate</label>
+                              <input type="text" [(ngModel)]="overtime_rate" class="form-control">
+                            </div>
+                          </div> 
+                          </div>
+                          <div   [(ngModel)]="Hourly_44_h_1_5_x_Overtime" id="Hourly_(44 h_+_1.5_x_Overtime)"   [style.display]="Hourly_44_h_1_5_x_Overtime ? 'block' : 'none'">
+                            <div class="row">
+                              <div class="col">
+                                <label>Hourly Rate</label>
+                                <input type="text" [(ngModel)]="hourly_rate" class="form-control">
+                              </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Overtime Rate</label>
+                              <input type="text" [(ngModel)]="overtime_rate" class="form-control">
+                            </div>
+                          </div> 
+                          </div>
+                          <div  [(ngModel)]="Rates_per_Day" id="Rates_per_Day"   [style.display]="Rates_per_Day ? 'block' : 'none'">
+                            <div class="row">
+                              <div class="col">
+                                <label>Monday Rate</label>
+                                <input type="text" [(ngModel)]="monday_rate" class="form-control">
+                              </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Tuesday Rate</label>
+                              <input type="text" [(ngModel)]="tuesday_rate" class="form-control">
+                            </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>wednesday Rate</label>
+                                <input type="text" [(ngModel)]="wednesday_rate"  class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Thrusday Rate</label>
+                                <input type="text" [(ngModel)]="thrusday_rate" class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Friday Rate</label>
+                                <input type="text" [(ngModel)]="friday_rate" class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Sunday Rate</label>
+                                <input type="text" [(ngModel)]="sunday_rate" class="form-control">
+                              </div>
+                            </div> 
+                            <div class="row">
+                              <div class="col">
+                                <label>Satday Rate</label>
+                                <input type="text" [(ngModel)]="saterday_rate" class="form-control">
+                              </div>
+                            </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Holiday Rate</label>
+                              <input type="text" [(ngModel)]="holiday_rate" class="form-control">
+                            </div>
+                          </div> 
+                          <div class="row">
+                            <div class="col">
+                              <label>Overtime Rate</label>
+                              <input type="text" [(ngModel)]="overtime_rate" class="form-control">
+                            </div>
+                          </div> 
+                          </div>
+                          
+
+                          </div>
+                          </div>
+                        </div> 
+
+                        <div class="form-group">
+                          <div class="row">
+                          <div class="col">
+                            Payroll ID
+                          </div>
+                          <div class="col">
+                            <input type="text" [(ngModel)]="Payroll_ID" class="form-control">
+                          </div>
+                          </div>
+                        </div> 
+
+                        <div class="modal-footer">
+                        <div class="form-group">
+                          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hidePayroll()">Close</button>
+                          <button type="button" class="btn btn-primary"  (click)="savePayroll()"><span *ngIf="payroll_id>0">Update</span> <span *ngIf="payroll_id==''">Save</span> </button>
+                        </div> 
+                        </div>
+                    
+                      </div>
+                    </div>
+
+                  </div>
+                  <!--//-->
+
+                  <!--leave-->
+                  <div class="tab-pane fade" id="leave"  role="tabpanel" aria-labelledby="leave-tab">
+        
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col">
+                          Start date
+                        </div>
+                        <div class="col">
+                          <input class="form-control calendar"   [(ngModel)]="leave_start_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d3="ngbDatepicker" (click)="d3.toggle()" (navigate)="date = $event.next" > 
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          End date
+                        </div>
+                        <div class="col">
+                          <input class="form-control calendar"   [(ngModel)]="leave_end_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d4="ngbDatepicker" (click)="d4.toggle()" (navigate)="date = $event.next" > 
+                        </div>
+                      </div>
+                      <div class="row">
+                      <div class="col">
+                        Leave
+                      </div>
+                      <div class="col">
+                        <select  [(ngModel)]="leave_type"  class="form-control" (change)="payRate()">
+                          <option value="Annual Leave (Vacation)">Annual Leave (Vacation)</option>
+                          <option value="Bereavement (Compassionate) Leave">Bereavement (Compassionate) Leave</option>
+                          <option value="Community Service Leave">Community Service Leave</option>
+                          <option value="Long Service Leave">Long Service Leave</option>
+                          <option value="Other Paid Leave">Other Paid Leave</option>
+                          <option value="Sick (Personal/Carer's) Leave">Sick (Personal/Carer's) Leave</option>
+                          <option value="Time Off In Lieu">Time Off In Lieu</option>
+                          <option value="Unpaid Leave - Leave">Unpaid Leave - Leave</option>
+                          <option value="Unpaid Leave - No Show">Unpaid Leave - No Show</option>
+                          <option value="Unpaid Leave - Sick">Unpaid Leave - Sick</option>
+                          
+                        </select>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        <div class="col">
+                          <button type="button" class="btn btn-success"  (click)="saveLeave()"><span *ngIf="leave_id>0">Update</span> <span *ngIf="leave_id==''">Save</span> </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <ul class="list-group list-group-flush"  *ngFor="let eachleave of leave; let i=index">
+                        <li class="list-group-item">
+                          <div class="row">
+                            <div class="col"> {{eachleave.start_date}} </div>
+                            <div class="col"> {{eachleave.end_date}} </div>
+                            <div class="col"> {{eachleave.leave_type}} </div>
+                            <div class="col"><button class="btn btn-primary" (click)="editLeave(eachleave.id)">Edit</button></div>
+                            <div class="col"><button class="btn btn-danger" (click)="deleteLeave(eachleave.id)">Delete</button></div>
+                        </div>   
+                        </li>                     
+                      </ul>
+                    </div>
+                  </div>     
+        
+                  </div>
+                  <!--//-->
+
+                  <!--Training-->
+                  <div class="tab-pane fade" id="training" role="tabpanel"  aria-labelledby="training-tab">
+                    <div class="form-group">
+                      <div class="row">
+                      <div class="col">
+                        Training
+                      </div>
+                      <div class="col">
+                        <select  [(ngModel)]="training_type"  class="form-control">
+                          <option value="Employee Training">Employee Training</option>
+                          <option value="SWPP Training">SWPP Training</option>
+                          <option value="Legal">Legal</option>                    
+                        </select>
+                    </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        Renewal date
+                      </div>
+                      <div class="col">
+                        <input class="form-control calendar"   [(ngModel)]="training_renewal_date"  placeholder="yyyy-mm-dd"
+                          name="dp"  ngbDatepicker #d5="ngbDatepicker" (click)="d5.toggle()" (navigate)="date = $event.next" > 
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        Notes
+                      </div>
+                      <div class="col">
+                        <textarea  class="form-control" [(ngModel)]="training_notes" ></textarea> 
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                      </div>
+                      <div class="col">
+                      <button type="button" class="btn btn-success"  (click)="saveTraining()"><span *ngIf="training_id>0">Update</span> <span *ngIf="training_id==''">Save</span> </button>
+                    </div>
+                    </div>
+                    <div class="row">
+                      <ul class="list-group list-group-flush"  *ngFor="let eachtraining of training; let i=index">
+                        <li class="list-group-item">
+                          <div class="row">
+                            <div class="col"> {{eachtraining.training_type}} </div>
+                            <div class="col"> {{eachtraining.renewal_date}} </div>
+                            <div class="col"> {{eachtraining.notes}} </div>
+                            <div class="col"><button class="btn btn-primary" (click)="editTraining(eachtraining.id)">Edit</button></div>
+                            <div class="col"><button class="btn btn-danger" (click)="deleteTraining(eachtraining.id)">Delete</button></div>
+                        </div>   
+                        </li>                     
+                      </ul>
+                    </div> 
+                  </div> 
+                  </div>
+                  <!--//-->
+
+                  <!--Unavailability-->
+                  <div class="tab-pane fade" id="unavailability"  role="tabpanel" aria-labelledby="unavailability-tab">
+                    <div class="row">
+                      <div class="col">
+                      <div class="form-group">
+                          <div class="row">
+                            <label for="Repeat" class="col-md-12 control-label">Repeat</label>
+                            <div class="col-md-12">
+                              <select  [(ngModel)]="unavailability_repeat_type"  id="repeat_type" (change)="repeatTypeChange()" class="form-control">  
+                                <option value="Do not repeat">Don't repeat</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="2Weekly">2 Weekly</option>
+                                <option value="4Weekly">4 Weekly</option>
+                                <option value="Monthly">Monthly</option>                
+                              </select>    
+                            </div>
+                            </div>
+                      </div>                      
+                    </div> 
+                  </div> 
+
+                  <div class="row"  [style.display]="unavailability_dayShow? 'block' : 'none' ">
+                    <div class="col">
+                    <div class="form-group">
+                        <div class="row">
+                          <label for="On" class="col-md-12 control-label">On</label>
+                          <div class="col-md-12">
+                            Mon <input type="checkbox" [(ngModel)]="unavailability_Mon" name="weekly_on">
+                            Tue <input type="checkbox" [(ngModel)]="unavailability_Tue" name="weekly_on">
+                            Wed <input type="checkbox" [(ngModel)]="unavailability_Wed" name="weekly_on">
+                            Thu <input type="checkbox" [(ngModel)]="unavailability_Thu" name="weekly_on">
+                            Fri <input type="checkbox" [(ngModel)]="unavailability_Fri" name="weekly_on">
+                            Sat <input type="checkbox" [(ngModel)]="unavailability_Sat" name="weekly_on">
+                            Sun <input type="checkbox" [(ngModel)]="unavailability_Sun" name="weekly_on">          
+                          </div>
+                          </div>
+                    </div>                      
+                  </div> 
+                  </div> 
+
+
+                    <div class="form-group" [style.display]="unavailability_dateShow? 'block' : 'none' ">
+                      <div class="row">
+                        <div class="col">
+                          Start date
+                        </div>
+                        <div class="col">
+                          <div class="row">
+                              <div class="col">
+                                <input class="form-control calendar"   [(ngModel)]="unavailability_start_date"  placeholder="yyyy-mm-dd"
+                                name="dp"  ngbDatepicker #d6="ngbDatepicker" (click)="d6.toggle()" (navigate)="date = $event.next"> 
+                              </div>
+                              <div class="col">
+                                <select type="text" [(ngModel)]="unavailability_start_time" class="form-control">  
+                                  <option value="12:00">12:00 AM</option>
+                                  <option value="12:15">12:15 AM</option>
+                                  <option value="12:30">12:30 AM</option>
+                                  <option value="12:45">12:45 AM</option>
+                                  <option value="1:00">1:00 PM</option>
+                                  <option value="1:15">1:15 PM</option>
+                                  <option value="1:30">1:30 PM</option>
+                                  <option value="1:45">1:45 PM</option>
+                                  <option value="2:00">2:00 PM</option>
+                                </select> 
+                              </div>
+                          </div> 
+                          
+                            
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col">
+                          End date
+                        </div>
+                        <div class="col">
+                          <div class="row">
+                            <div class="col">
+                              <input class="form-control calendar"   [(ngModel)]="unavailability_end_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d7="ngbDatepicker" (click)="d7.toggle()" (navigate)="date = $event.next" > 
+                            </div>
+                            <div class="col">
+                              <select type="text" [(ngModel)]="unavailability_end_time" class="form-control">  
+                                  <option value="12:00">12:00 AM</option>
+                                  <option value="12:15">12:15 AM</option>
+                                  <option value="12:30">12:30 AM</option>
+                                  <option value="12:45">12:45 AM</option>
+                                  <option value="1:00">1:00 PM</option>
+                                  <option value="1:15">1:15 PM</option>
+                                  <option value="1:30">1:30 PM</option>
+                                  <option value="1:45">1:45 PM</option>
+                                  <option value="2:00">2:00 PM</option>
+                                </select> 
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                      
+                    </div>     
+                  
+                  
+                  <div class="row">
+                    <div class="col">
+                    <div class="form-group">
+                        <div class="row">
+                          <label for="On" class="col-md-12 control-label">Notes</label>
+                          <div class="col-md-12">
+                            <textarea  class="form-control" [(ngModel)]="unavailability_notes" ></textarea>         
+                          </div>
+                          </div>
+                    </div>                      
+                  </div> 
+                  </div> 
+
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        <div class="col">
+                          <button type="button" class="btn btn-success"  (click)="saveUnavailability()"><span *ngIf="unavailability_id>0">Update</span> <span *ngIf="unavailability_id==''">Save</span> </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <ul class="list-group list-group-flush"  *ngFor="let eachunavailability of unavailability; let i=index">
+                        <li class="list-group-item">
+                          <div class="row">
+                            <div class="col"> {{eachunavailability.start_date}} </div>
+                            <div class="col"> {{eachunavailability.end_date}} </div>
+                            <div class="col"> {{eachunavailability.repeat_type}} </div>
+                            <div class="col"> 
+                                <span *ngIf="eachunavailability.Mon==1">Mon </span>
+                                <span *ngIf="eachunavailability.Tue==1">Tue </span>
+                                <span *ngIf="eachunavailability.Wed==1">Wed </span>
+                                <span *ngIf="eachunavailability.Thu==1">Thu </span>
+                                <span *ngIf="eachunavailability.Fri==1">Fri </span>
+                                <span *ngIf="eachunavailability.Sat==1">Sat </span>
+                                <span *ngIf="eachunavailability.Sun==1">Sun </span>
+                            </div>
+                            <div class="col"><button class="btn btn-primary" (click)="editUnavailability(eachunavailability.id)">Edit</button></div>
+                            <div class="col"><button class="btn btn-danger" (click)="deleteUnavailability(eachunavailability.id)">Delete</button></div>
+                        </div>   
+                        </li>                     
+                      </ul>
+                    </div>
+                  
+        
+                  </div>
+                  <!--//-->
+
+
+                  <!--upload_picture-->
+                  <div class="tab-pane fade" id="upload_picture"  role="tabpanel" aria-labelledby="upload_picture-tab">
+                    <div class="form-group">
+                      <div class="row">
+                       <div class="col">
+                        <input type="file" formControlName="file_picture"  [(ngModel)]="file_picture" id="picture"  (change)="onFileChange1($event)" class="form-control">
+                        <button class="btn btn-primary" (click)="uploadPicture(employee.id);"><i class="bi bi-camera"></i>Upload Picture</button>  
+                      </div>
+                       </div>
+                    </div> 
+                  </div>
+
+              </div> 
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!--Add a Multiple person//-->
+
+
+<!--CSV Employee Import-->
+<!-- The Modal -->
+<div class="modal" id="modalMember"  [style.display]="showCSVLeaveModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">CSV Employee Import
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"  (click)="hideLeavecsv()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="row">
+               <div class="col"><button (click)="downloadLeaveCSVFormat()">Download Leave CSV Format</button></div>
+               </div>
+            </div> 
+            <div class="mx-auto" style="height:50px;">
+              
+            </div>
+            <div class="form-group">
+              <div class="row">
+               <div class="col"><input type="file" formControlName="file_employee_csv"  [(ngModel)]="file_employee_csv" id="csv"  (change)="onFileChange3($event)" class="form-control"></div>
+               </div>
+            </div> 
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideLeavecsv()">Close</button>
+        <button type="button" class="btn btn-primary"  (click)="uploadLeaveCSV()">Upload</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+  <p style="color: white">Please Wait. </p>  
+</ngx-spinner>    

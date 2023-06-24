@@ -1,0 +1,162 @@
+
+<div class="container">
+  <div class="row">
+    <div class="col col-md-10">
+       <div class="col">
+        <span  style="float: right;">        
+          <button  type="button" class="btn btn-primary"  (click)="showNews()">
+            <i class="bi bi-plus-square"></i>Add New News
+          </button>
+         </span>
+       </div>
+    </div>
+    <div>
+
+
+      <div class="row">
+        <div class="col">
+            
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Leave Apply 
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachleave of leave_apply;">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachleave.first_name}} {{eachleave.last_name}} </div>
+                      <div class="col"> {{eachleave.start_date}} </div>
+                      <div class="col"> {{eachleave.end_date}} </div>
+                      <div class="col"> {{eachleave.leave_type}} </div>      
+                      <div class="col"> {{eachleave.status}} </div>    
+                      <div class="col">
+                        <button (click)="accept(eachleave.id)"><i class="bi bi-plus"></i>Accept</button>  
+                     
+                        <button (click)="reject(eachleave.id)"><i class="bi bi-x"></i>Reject</button>  
+                     
+                        <button (click)="deleteLeaveApply(eachleave.id)"><i class="bi bi-trash3"></i></button>  
+                      </div>             
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+
+        </div>
+      </div>
+
+    <div class="card"   *ngFor="let each_news of news_list; let i=index">
+      <div class="card-header">
+          <div class="col"> 
+            <img [src]="each_news.file_picture?each_news.file_picture:defaultImg" class="rounded-circle" style="width: 50px;height: 50px;" alt="">     
+             <a  class="wa-link">  {{each_news.first_name}} {{each_news.last_name}}</a>
+          </div>
+      </div>
+      <div class="card-body">
+
+       
+
+
+
+          <div class="row">
+            <div class="col">
+             {{each_news.contents}}
+             <div *ngIf="each_news.file_news!=null">
+                <img [src]="each_news.file_news" style="width: 100px;height: 100px;" alt="">
+             </div>
+              
+            </div>
+            <div class="col">
+                  <span (click)="editNews(each_news.id)"><i class="bi bi-pencil-square"></i> </span> 
+                  <span (click)="deleteNews(each_news.id)"><i class="bi bi-trash"></i></span>
+            </div>
+        </div>   
+       </div>
+    </div>
+    </div>
+
+</div>
+
+</div>
+
+
+ <!-- The Modal -->
+ <div class="modal" id="modalMember"  [style.display]="showNewsModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add a News
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideNews()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="form-group">
+                <div class="row">
+                <div class="col col-md-3">
+                  Share With
+                </div>
+                <div class="col">
+                  <ng-multiselect-dropdown
+                    [placeholder]="'Select'"
+                    [settings]="dropdownSettings"
+                    [data]="dropdownList"
+                    [(ngModel)]="selectedItems"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)" name="fieldName" ngDefaultControl>
+                    </ng-multiselect-dropdown>
+                </div>
+                </div>
+              </div> 
+
+              <div class="form-group">
+               <div class="row">
+                   <div class="col col-md-3">News</div>
+                   <div class="col"> 
+                    <textarea  class="form-control" [(ngModel)]="news_content" ></textarea> 
+                  </div>
+               </div>
+              </div> 
+
+              <div class="form-group">
+                <div class="row">
+                 <div class="col col-md-3">Attached File</div>
+                 <div class="col"> 
+                   <input type="file" formControlName="file_news"  [(ngModel)]="file_news" id="fp"  (change)="onFileChange($event)" class="form-control">
+                 </div>
+                </div>
+                </div>
+
+              
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideNews()">Close</button>
+          <button type="button" class="btn btn-primary"  (click)="saveNews()"><span *ngIf="news_id>0">Update</span> <span *ngIf="news_id==''">Save</span> </button>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+
+
+  
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+<p style="color: white">Please Wait. </p>  
+</ngx-spinner>    
+

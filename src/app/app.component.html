@@ -1,0 +1,141 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" [style.display]="headerVisible ? 'block' : 'none'">
+    <!--<a class="navbar-brand" href="#">PM</a>-->
+    <button class="navbar-toggler" type="button" (click)="exPand()" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse shadow" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <img src="https://i.pinimg.com/564x/cd/25/86/cd258631cca8bee2893e6c4bb7ecb06e.jpg"  class="nav-link" style="height:50px;">
+        </li>        
+        <li class="nav-item">
+            <a [routerLink]="['/dashboard']" class="nav-link" routerLinkActive="active  dashboard">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a [routerLink]="['/news']"  class="nav-link" routerLinkActive="active  register">News Feed</a>
+        </li>
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/projects']" class="nav-link" routerLinkActive="active  Projects">Projects</a>  
+        </li>
+        <!--    
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/tasks']" class="nav-link" routerLinkActive="active  tasks">Tasks</a>  
+        </li>
+        -->
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/locations']" class="nav-link" routerLinkActive="active  locations">Locations</a> 
+        </li>
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/people']" class="nav-link" routerLinkActive="active  locations">People</a> 
+        </li>
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/schedule']" class="nav-link" routerLinkActive="active  schedule">Schedule</a> 
+        </li>       
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'">
+            <a [routerLink]="['/timesheet']" class="nav-link" routerLinkActive="active  timesheet">Timesheet</a>
+        </li>
+        <li class="nav-item"  *ngIf="this.user_type!='Employee'"> 
+            <a [routerLink]="['/reports']" class="nav-link" routerLinkActive="active  reports">Reports</a> 
+        </li>  
+        <li class="nav-item"  style="margin: left 200px;">
+            <div class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                {{first_name}} {{last_name}} <img [src]="file_picture" class="rounded" style="width: 25px;">
+              </a>
+              <div class="dropdown-menu">           
+                  <!-- Button trigger modal -->
+                  <button  class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                      <i class="bi bi-text-left"></i> Profile
+                  </button>
+                  <a [routerLink]="['/profile']" class="dropdown-item">Edit Profile</a>
+                  <div class="dropdown-divider"></div>
+                  <a [routerLink]="['/login/logout']" class="dropdown-item">Logout</a>
+              </div>
+            </div>
+         </li>
+      </ul>
+    </div>
+   
+</nav>
+
+<!-- Sidebar 
+https://getbootstrap.com/docs/5.0/components/offcanvas/
+-->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h1 id="offcanvasRightLabel">Profile</h1>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+      
+     <div class="row">
+        <div class="col"></div>
+        <div class="col">
+          <a [routerLink]="['/profile']" class="btn btn-default">Edit Profile</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <img [src]="file_picture" class="rounded" style="width: 25px;">
+          {{first_name}} {{last_name}} <br>
+          {{user.user_type}} <br>
+        </div>
+        <div class="col">
+          {{phone_no}}<br>
+          {{email}}
+        </div>
+     </div>
+     <div class="row">
+      <div class="col">
+        Business
+      </div>
+      <div class="col">
+          {{business_name}}
+      </div> 
+     </div>
+      
+   
+  </div>
+</div>
+
+
+
+
+<!--Switch Business-->
+<!-- The Modal -->
+<div class="modal" id="modalMember"  [style.display]="showBusinessModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Business
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"  (click)="hideBusiness()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            
+           
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideBusiness()">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!--Add a Multiple person//-->
+
+
+<router-outlet></router-outlet>
+ 

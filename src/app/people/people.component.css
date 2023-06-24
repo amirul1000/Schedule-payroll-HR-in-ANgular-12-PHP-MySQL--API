@@ -1,0 +1,12 @@
+.wa-link{
+    color: #3d1cba;
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}

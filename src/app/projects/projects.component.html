@@ -1,0 +1,202 @@
+<style>
+    .btn-primary,.btn-danger{
+      color:none  !important;
+      background-color: #3d1cba;
+    }
+    .btn-primary,.btn-danger:hover{
+      color:none  !important;
+      background-color: #3d1cba;
+    }
+    .btn-primary,.btn-danger:active {
+      color:none  !important;
+      background-color: #3d1cba !important;
+    }
+    .modal-dialog {
+       max-width: 600px !important;
+      }    
+</style>
+
+  <div class="container">
+      <div class="row">
+        <div class="col col-md-10">
+          <input type="search" [(ngModel)]="searchText" placeholder="Search">
+        </div>
+        <div class="col col-md-2">
+          <div ngbDropdown class="dropdown">
+              <button ngbDropdownToggle class="btn btn-primary" type="button" id="dropdownMenuButton2" aria-expanded="false">
+                  Add Project  <span class="caret"></span>
+              </button>
+              <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton2">
+                <li><button type="button" class="btn" (click)="addProjectModal()">Add project</button></li>
+               
+              </ul>
+          </div>
+        </div>
+        </div>
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col"><b>Title</b></div>
+                  <div class="col"><b>Priority</b></div>
+                  <div class="col"><b>Status</b></div>
+                  <div class="col"><b>Due date</b></div>
+                  <div class="col"><b>Download</b></div>
+                  <div class="col"></div>
+              </div>
+              <div class="row border"  *ngFor="let project of projects|filter:searchText; let i=index">
+                  <div class="col"> {{project.project_title}}</div>
+                  <div class="col">{{project.priority}}</div>
+                  <div class="col">{{project.project_status}}</div>
+                  <div class="col">{{project.due_date}}</div>
+                  <div class="col"><span  *ngIf="project.file_project"><a href="{{project.file_project}}" target="_blank">Download</a></span></div>
+                 
+                  <div class="col">
+                    <div style="display: inline-block;text-align: center;">
+                      <div ngbDropdown class="dropdown" style="float:right;margin-left: 3px;">
+                          <button ngbDropdownToggle class="btn btn-default" type="button" id="dropdownMenuButton1" aria-expanded="false">
+                              <i class="bi bi-three-dots"></i>
+                          </button>                        
+                          <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                            <li><button type="button" class="btn" (click)="editProject(project.id);">Edit</button></li>
+                            <li><button type="button" class="btn" (click)="deleteProject(project.id);">Delete</button></li>
+                          </ul>
+                      </div>
+                    </div>
+
+                  </div>
+              </div>
+        </div> 
+    </div>    
+  </div>
+
+
+  
+<!--Add a Add Project-->
+   <!-- The Modal -->
+   <div class="modal" id="modalMember"  [style.display]="showProjectModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add Project
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideProject()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+
+
+
+                <div class="form-group">
+                    <div class="row">
+                     <div class="col col-md-3">Assignto</div>
+                     <div class="col"> 
+                         <ng-multiselect-dropdown  
+                        [placeholder]="'Select a Member'"
+                        [settings]="dropdownSettingsScheWho"
+                        [data]="dropdownListScheWho"
+                        [(ngModel)]="selectedItemsScheWho"
+                        (onSelect)="onItemSelect($event)"
+                        (onSelectAll)="onSelectAll($event)">
+                        </ng-multiselect-dropdown>    
+                       </div>                 
+                    </div>              
+                </div>
+     
+
+              <div class="form-group">
+               <div class="row">
+                   <div class="col col-md-3">Project title</div>
+                   <div class="col"> <input type="text"  [(ngModel)]="project_title" id="first_name" class="form-control"></div>
+               </div>
+              </div> 
+              <div class="form-group">
+               <div class="row">
+                <div class="col col-md-3">Project description</div>
+                <div class="col"><textarea  [(ngModel)]="project_description" id="last_name" class="form-control"></textarea></div>
+               </div>
+               </div>
+
+               <div class="form-group">
+
+                <div class="row">
+                  <div class="col col-md-3">Due Date</div>
+                  <div class="col"> 
+                    <input class="form-control calendar"   [(ngModel)]="due_date"  placeholder="yyyy-mm-dd"
+                    name="dp"  ngbDatepicker #d2="ngbDatepicker" (click)="d2.toggle()" (navigate)="date = $event.next" > 
+                  </div>
+              </div>
+              </div>
+
+            <div class="form-group">
+               <div class="row">
+                <div class="col col-md-3">Main Location</div>
+                <div class="col"> <ng-multiselect-dropdown  
+                  [placeholder]="'Select a Location'"
+                  [settings]="dropdownSettingsMemLoc"
+                  [data]="dropdownListMemLoc"
+                  [(ngModel)]="selectedItemsMemLoc"
+                  (onSelect)="onItemSelect($event)"
+                  (onSelectAll)="onSelectAll($event)">
+                  </ng-multiselect-dropdown></div>
+               </div>
+               </div>
+
+
+               <div class="form-group">
+                <div class="row">
+                 <div class="col col-md-3">Priority</div>
+                 <div class="col"> <ng-multiselect-dropdown  
+                   [placeholder]="'Select a priority'"
+                   [settings]="dropdownSettingsPriority"
+                   [data]="dropdownListPriority"
+                   [(ngModel)]="selectedItemsPriority"
+                   (onSelect)="onItemSelect($event)"
+                   (onSelectAll)="onSelectAll($event)">
+                   </ng-multiselect-dropdown></div>
+                </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="row">
+                     <div class="col col-md-3">Status</div>
+                     <div class="col"> <ng-multiselect-dropdown  
+                       [placeholder]="'Select a priority'"
+                       [settings]="dropdownSettingsStatus"
+                       [data]="dropdownListStatus"
+                       [(ngModel)]="selectedItemsStatus"
+                       (onSelect)="onItemSelect($event)"
+                       (onSelectAll)="onSelectAll($event)">
+                       </ng-multiselect-dropdown></div>
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="row">
+                       <div class="col col-md-3">Attached File</div>
+                       <div class="col"> 
+                         <input type="file" formControlName="file_project"  [(ngModel)]="file_project" id="fp"  (change)="onFileChange($event)" class="form-control">
+                       </div>
+                      </div>
+                      </div>
+        
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideProject()">Close</button>
+          <button type="submit" class="btn btn-success" (click)="saveProject(id);"><span *ngIf="id>0">Update</span> <span *ngIf="!(id>0)">Save</span></button>
+        </div>
+        
+      </div>
+    </div>
+        </div>
+
+  </div>     
+</div>  
+</div>   
+<!-- Add a single person//-->

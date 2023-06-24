@@ -1,0 +1,28 @@
+<a  href="<?php echo site_url('admin/business/index'); ?>" class="btn btn-info"><i class="arrow_left"></i> List</a>
+<h5 class="font-20 mt-15 mb-1"><?php echo str_replace('_',' ','Business'); ?></h5>
+<!--Data display of business with id--> 
+<?php
+	$c = $business;
+?> 
+<table class="table table-striped table-bordered">         
+		<tr><td>Super Users</td><td><?php
+									   $this->CI =& get_instance();
+									   $this->CI->load->database();	
+									   $this->CI->load->model('Users_model');
+									   $dataArr = $this->CI->Users_model->get_users($c['super_users_id']);
+									   echo $dataArr['email'];?>
+									</td></tr>
+
+<tr><td>Business Name</td><td><?php echo $c['business_name']; ?></td></tr>
+
+<tr><td>Time Zone</td><td><?php echo $c['time_zone']; ?></td></tr>
+
+<tr><td>Address</td><td><?php echo $c['address']; ?></td></tr>
+
+<tr><td>Created At</td><td><?php echo $c['created_at']; ?></td></tr>
+
+<tr><td>Updated At</td><td><?php echo $c['updated_at']; ?></td></tr>
+
+
+</table>
+<!--End of Data display of business with id//--> 

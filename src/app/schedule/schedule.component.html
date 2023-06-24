@@ -1,0 +1,519 @@
+<style>
+.btn-primary,.btn-danger{
+  color:none  !important;
+}
+.modal-dialog {
+   max-width: 600px !important;
+  }
+  .form-group{
+    margin-bottom: 10px;
+  }
+
+  .fc-view-harness.fc-view-harness-active{
+   width: 100px !important;
+}
+
+.btn-primary,.btn-danger{
+    color:none  !important;
+    background-color: #3d1cba;
+  }
+  .btn-primary,.btn-danger:hover{
+    color:none  !important;
+    background-color: #3d1cba;
+  }
+  .btn-primary,.btn-danger:active {
+    color:none  !important;
+    background-color: #3d1cba !important;
+  }
+
+  
+
+</style>
+
+
+<div class="row">
+  <div class="col">
+    <select [ngModel]="SelectedLocation" class="form-control link" (change)="onLocationSelect($event)">
+      <option [value]="null" [selected]="true">All Locations</option> 
+      <option [value]="loc.id+'-'+loc.loc_type"  *ngFor="let loc of location_area;let i=index" ><p *ngIf="loc.loc_type=='child'">&nbsp;&nbsp;</p> {{loc.location}}</option>
+   </select>    
+  </div>
+  <div class="col">
+    <input class="form-control calendar"   [(ngModel)]="schedule_start_date"  placeholder="yyyy-mm-dd"
+    name="dp"  ngbDatepicker #d2="ngbDatepicker" (click)="d2.toggle()" (navigate)="date = $event.next" (dateSelect)="setvalidRange()"> 
+    <span *ngIf="cal_start_date && cal_end_date"> {{cal_start_date}} to {{cal_end_date}} </span>
+  </div>
+  <div class="col">
+    <select [(ngModel)]="resource_type" class="form-control" (change)="swithchResources()">
+       <option value="resource_by_member" [selected]="true">VIEW BY TEAM MEMBER</option>
+       <option value="resource_by_area">VIEW BY Department</option>
+    </select>
+  </div>
+   <div  class="col">  
+   <select  [(ngModel)]="cal_day_range" class="form-control" (change)="setvalidRange()">
+     <option value="0">Day</option>
+     <option value="6">Week</option>
+     <option value="13">2 Weeks</option>
+     <option value="27">4 Weeks</option>
+     <option value="29">Month</option>
+   </select>
+   <!-- <div ngbDropdown class="dropdown">
+      <button ngbDropdownToggle class="btn btn-default" type="button" id="dropdownMenuButton1" aria-expanded="false">
+        VIEW BY AREA  <span class="caret"></span>
+      </button>
+      <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+        <li>VIEW BY AREA</li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;"  (click)="memberAreaBasis('member','day')">Day</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','week')">Week</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','2week')">2 Weeks</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','4week')">4 Weeks</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','month')">Month</button></li>
+        <li></li>
+        <li>VIEW BY TEAM MEMBER</li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','day')">Day</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','week')">Week</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','2week')">2 Weeks</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','4week')">4 Weeks</button></li>
+        <li><button type="button" class="btn" style="width: 100%;text-align: left;" (click)="memberAreaBasis('member','month')">Month</button></li>
+      </ul>
+  </div>-->
+   </div>
+   <div class="col">
+    <button (click) = "publishedSchedule()">
+      <i class="bi bi-arrow-up"></i> {{total_unpublished }} Publish Schedule</button> 
+   </div>
+</div>
+
+
+<div class="row">
+   <div class="col col-md-2 col-sm-offset-4">
+    <!--Searchable Member
+    https://mdbootstrap.com/docs/angular/forms/search/
+   -->
+      <div class="md-form">
+        <input type="search" [(ngModel)]="searchText" placeholder="Search">
+      </div>
+      <div class="form-group">
+          <ul *ngFor="let data of dataset|filter:searchText; let i=index" style="list-style: none; margin: 0;padding: 0;">
+            <li class="promoinside" [style]="showeUserDetails[i]==true ?'background-color:#F3F2FB':'background-color:#FFFFFF'"> 
+            <div (click)="toggleUserDetails(i)">
+              <img [src]="data.file_picture?data.file_picture:defaultImg" class="rounded-circle" style="width: 50px;height:50px;" alt="">
+              {{data.first_name}} {{data.last_name}}
+              <div class="short_hr_cost" [style.display]="showeUserDetails[i] ==false ? 'block' : 'none'"> {{data.total_hrs}} :USD {{data.total_pay}} </div>
+            </div>
+            <ul style="list-style: none;" [style.display]="showeUserDetails[i] ? 'block' : 'none'">
+              <li>Total Hours: {{data.total_hrs}} </li>
+              <li>Base Pay: <span  *ngIf="data.payroll.length>0">Weekday {{data.payroll[0]['weekday_rate']}}</span>
+                      <span  *ngIf="data.payroll.length==0">No Pay Details</span> 
+              </li>
+              <li>Total Cost:USD {{data.total_pay}} </li>
+              <li *ngIf="data.payroll.length>0">Stress: {{data.payroll[0]['stress_profile']}}</li>
+              <li>Training: 
+                    <span *ngFor="let training of data.training">
+                       <span class="chip chip-outline btn-outline-primary">
+                         {{training.training_type}}
+                       </span>
+                    </span>    
+
+              </li>
+            </ul>
+            </li>
+          </ul>
+     </div>
+     <!--New Member-->
+    <button (click) = "showMember()"><i class="fa fa-people"></i>
+      <i class="bi bi-person-plus"></i> New Team Member</button> 
+   </div>
+   <div class="col col-md-10 col-sm-12">
+      <!--https://stackblitz.com/edit/angular-pffzrq?file=src%2Fapp%2Fapp.component.ts-->
+
+     <full-calendar #calendar [options]="calendarOptions"   id="calendar"></full-calendar>
+
+     
+     <!-- <div id="calendar2"></div>-->
+      
+     
+   </div>
+</div>
+
+<style>
+      /*  .fc td {         
+          height: 200px !important;
+      }
+      .fc-timeline-slot{
+        height: 200px !important;
+      }*/
+</style>
+  <!--
+  <button type="button" class="btn btn-primary" (click) = "show()">
+    Open modal
+  </button>
+-->
+ <!--Schedule-->
+ <!-- The Modal -->
+  <div class="modal" id="myModal" [style.display]="showModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">{{ title }}</h4>
+          <button type="button" class="close" data-dismiss="modal" (click) = "hide()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+            <div class="row">
+               <div class="col">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">                    
+                          <label for="Task" class="col-md-12 control-label">Who is working?</label>
+                          <div class="col-md-12"> 
+                            <ng-multiselect-dropdown  
+                            [placeholder]="'Select a Member'"
+                            [settings]="dropdownSettingsScheWho"
+                            [data]="dropdownListScheWho"
+                            [(ngModel)]="selectedItemsScheWho"
+                            (onSelect)="onItemSelect($event)"
+                            (onSelectAll)="onSelectAll($event)">
+                            </ng-multiselect-dropdown>
+                          </div>
+                      </div> 
+                      <div class="col-md-6"> 
+                          <label for="area_name" class="col-md-12 control-label">In which Department?</label>
+                          <div class="col-md-12">                  
+                            <ng-multiselect-dropdown  
+                              [placeholder]="'Select a Location'"
+                              [settings]="dropdownSettingsScheLoc"
+                              [data]="dropdownListScheLoc"
+                              [(ngModel)]="selectedItemsScheLoc"
+                              (onSelect)="onItemSelect($event)"
+                              (onSelectAll)="onSelectAll($event)">
+                              </ng-multiselect-dropdown>
+                          </div>   
+                      </div> 
+                </div>
+                </div>                      
+             </div> 
+            </div> 
+            <div class="row">
+             <div class="col">
+                <div class="form-group">
+                  <div class="row">   
+                   <div class="col-md-3">
+                        <label for="" class="col-md-12 control-label">Start</label>
+                        <div class="col-md-12">
+                            <select [(ngModel)]="start" id="start"  class="form-control">
+                              <option value="">Select</option> 
+                              <option [value]="start.key"  *ngFor="let start of start_list" [selected]="start.key==start_selected?true:false">{{start.value}}</option> 
+                            </select>
+                         </div>
+                  </div>
+                  <div class="col-md-3"> 
+                        <label for="Finish" class="col-md-12 control-label">Finish</label>
+                        <div class="col-md-12">
+                            <select [(ngModel)]="finish" id="finish"  class="form-control">
+                              <option value="">Select</option> 
+                              <option [value]="finish.key"  *ngFor="let finish of finish_list"  [selected]="finish.key==finish_selected?true:false">{{finish.value}}</option> 
+                            </select>
+                        </div>
+                    </div>
+                      <div class="col-md-3"> 
+                            <label for="Meal Break" class="col-md-12 control-label">Meal Break</label>
+                            <div class="col-md-12">
+                                <select [(ngModel)]="meal_break" id="meal_break"  class="form-control">
+                                  <option value="">Select</option> 
+                                  <option [value]="meal_break.key"  *ngFor="let meal_break of meal_break_list"   [selected]="meal_break.key==meal_break_selected?true:false">{{meal_break.value}}</option> 
+                                </select>
+                            </div>
+                        </div>
+                     <div class="col-md-3"> 
+                        <label for="Rest Break" class="col-md-12 control-label">Rest Break</label>
+                        <div class="col-md-12">
+                            <select [(ngModel)]="rest_break" id="rest_break"  class="form-control">
+                              <option value="">Select</option> 
+                              <option [value]="rest_break.key"  *ngFor="let rest_break of rest_break_list" [selected]="rest_break.key==rest_break_selected?true:false">{{rest_break.value}}</option> 
+                            </select>  
+                        </div>
+                    </div>
+              </div>
+               </div>
+              </div>
+            </div>  
+          
+            </div>
+
+            <div [formGroup]="productForm"> 
+            <table class="table table-bordered" formArrayName="quantities" width="100%">  
+              <tr>  
+                <th>Break Details:</th>  
+                <th></th>
+                <th></th>
+                <th></th>
+                <th><button type="button" (click)="addQuantity()" class="btn"><i class="bi bi-plus"></i></button></th>  
+              </tr>  
+
+              <tr>
+                   <td>Type</td>
+                   <td>Duration(mins)</td>
+                   <td>Start</td>
+                   <td>Finish</td>
+                   <td></td>
+              </tr>
+              <tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">  
+                  <td>  
+                      <select type="text" formControlName="brkd_type"  class="form-control">  
+                        <option value="Meal Break">Meal Break</option>
+                        <option value="Rest Break">Rest Break</option>
+                      </select>  
+                  </td>  
+                  <td>  
+                      <select type="text" formControlName="brkd_duration"  class="form-control" (change)="setBrkdFinish(i)">  
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="45">45</option>
+                        <option value="60">60</option>
+                      </select>  
+                  </td>  
+                  <td>  
+                    <select type="text" formControlName="brkd_start"  class="form-control" (change)="setBrkdFinish(i)">  
+                      <option [value]="start.key"  *ngFor="let start of brkd_start_list" [selected]="start.key==brkd_start_selected?true:false">{{start.value}}</option> 
+                    </select>  
+                </td>  
+                <td>  
+                    <select type="text" formControlName="brkd_finish" class="form-control">  
+                      <option [value]="start.key"  *ngFor="let start of brkd_finish_list" [selected]="start.key==brkd_finish_selected?true:false">{{start.value}}</option> 
+                    </select>    
+                </td>  
+                <td>  
+                    <button (click)="removeQuantity(i)" class="btn"><i class="bi bi-trash"></i></button>  
+                </td>  
+              </tr>  
+            </table>  
+          </div>  
+
+            
+           <div class="row">  
+                <div class="col">
+                <div class="form-group">
+                    <label for="End Time" class="col-md-12 control-label">Notes</label>
+                    <div class="col-md-12">
+                      <textarea [(ngModel)]="notes" name="notes" [value]="notes_selected" style="width:100%;" placeholder="Add a note to this shift, the Team member will be able to see your notes when they check their shift."  class="form-control"></textarea>
+                    </div>
+                 </div>
+            </div>
+          </div>
+          <div class="row">     
+                <div class="col">
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <input type="hidden" [(ngModel)]="start_date" id="start_date" [value]="start_date_selected">
+                            <input type="hidden" [(ngModel)]="id"  [value]="id">
+                            <button type="submit" class="btn btn-success" (click)="saveSchedule();"><span *ngIf="id>0">Update</span> <span *ngIf="!(id>0)">Save</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                  <span *ngIf="id>0">
+                    <div style="display: inline-block;text-align: center;">
+                      <a class="btn btn-default">Shift Actions</a>
+                      <div ngbDropdown class="dropdown" style="float:right;margin-left: 3px;">
+                          <button ngbDropdownToggle class="btn btn-default" type="button" id="dropdownMenuButton1" aria-expanded="true">
+                            <span class="caret"></span>
+                          </button>                        
+                          <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                            <li><a type="button" class="btn" (click)="sendOffers(id)">Send Offers</a></li>
+                            <li><a type="button" class="btn" (click)="publish(id)">Publish</a></li>
+                            <li><a type="button" class="btn" (click)="repeatSevenDays(id)">Repeat for next 7 days</a></li>
+                            <li><a type="button" class="btn" (click)="viewDetails(id)">View Details</a></li>
+                          </ul>
+                      </div>
+                    </div>
+                  </span>
+               
+                </div>
+          </div> 
+        </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger" (click)="deleteSchedule(id);" *ngIf="id>0?true:false;">Delete</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click) = "hide()">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- The Modal -->
+  <div class="modal" id="modalMember"  [style.display]="showMemberModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add new Team member
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideMember()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              Choose a location for your new people and then add as many as you want by typing their names and email addresses. You can always edit someone's details later, so don't worry if you can't remember everything.
+             
+              <div class="row">
+              <div class="col-md-6"> 
+                <label for="area_name" class="col-md-12 control-label">Location</label>
+                <div class="col-md-12">     
+                  <ng-multiselect-dropdown  
+                    [placeholder]="'Select a Location'"
+                    [settings]="dropdownSettingsMemLoc"
+                    [data]="dropdownListMemLoc"
+                    [(ngModel)]="selectedItemsMemLoc"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)">
+                    </ng-multiselect-dropdown>
+
+
+                </div>   
+            </div> 
+          </div>
+
+          <div class="form-group">  
+              <div class="row">
+                 
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                     First Name
+                      </div>
+                    <div class="col">
+                    Last Name
+                    </div>
+                    <div class="col">
+                      Email
+                    </div>
+                    <div class="col">
+                      Phone No
+                    </div>
+                    <div class="col">                      
+                    </div>
+                  </div>
+                </div>
+                </div> 
+            </div>     
+
+              <div [formGroup]="productForm2"> 
+                <div  formArrayName="quantities2">
+                <div  *ngFor="let quantity of quantities2().controls; let i=index" [formGroupName]="i">  
+                  <div class="form-group"> 
+                  <div class="row">
+                 
+                  <div class="col">
+                    <div class="row">
+                      <div class="col">
+                      <input type="text"  formControlName="first_name" id="first_name" style="width: 100px;">
+                      </div>
+                      <div class="col">
+                        <input type="text"  formControlName="last_name" id="last_name" style="width: 100px;">
+                        </div>
+                      <div class="col">
+                        <input type="text"  formControlName="email" id="email"  style="width: 80px;">
+                      </div>
+                      <div class="col">
+                        <input type="text"  formControlName="phone_no" id="phone_no"  style="width: 80px;">
+                      </div>
+                      <div class="col">
+                        <button (click)="removeQuantity2(i)"><i class="bi bi-trash3"></i></button>  
+                      </div>
+                    </div>
+                  </div>
+                  </div> 
+                 
+                </div>
+              </div>
+            </div> 
+            </div>   
+
+            <div class="row">
+              <div class="col">
+                <button class="btn"  (click)="addQuantity2()"><i class="bi bi-plus"></i></button>
+              </div>
+             </div>   
+      
+          
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideMember()">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!--Send Offer-->
+  <!-- The Modal -->
+  <div class="modal" id="modalsendoffer"  [style.display]="showSendOfferModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Send Offer
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideSendOffer()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+             <div class="row">
+               <div class="col">
+                <ul *ngFor="let data of invite_users_list; let i=index" style="list-style: none; margin: 0;padding: 0;">                
+                  <li class="promoinside" *ngIf="!(data.first_name=='OpenShift' || data.first_name=='EmptyShift')"> 
+                  <div>
+                    <input type="checkbox"  [value]="data.id" (change)="onCheckboxChange($event)"/>
+                    <img [src]="data.file_picture?data.file_picture:defaultImg" class="rounded-circle" style="width: 50px;" alt="">
+                    {{data.first_name}} {{data.last_name}}
+                  </div>
+                  </li>
+                </ul>
+              </div>
+             </div>  
+            
+            <div class="row">
+              <div class="col">
+                <button type="submit" class="btn btn-success" (click)="inviteSchedule(id_invite);">Invite {{users_id_list.length}} People</button>
+             </div>
+            </div>
+
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideSendOffer()">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+  <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+    <p style="color: white">Please Wait. </p>  
+  </ngx-spinner> 

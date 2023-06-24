@@ -1,0 +1,488 @@
+
+<div class="section1"   [style.display]="showSection1 ? 'block' : 'none'">
+
+<div class="container">
+    <div class="row">
+       <div class="col col-md-10">
+        <input type="search" [(ngModel)]="searchText" placeholder="Search">
+       </div>
+       <div class="col col-md-2">
+        <button  type="button" class="btn btn-primary"  (click)="showLocation()">
+          <i class="bi bi-plus-square"></i>Add Location  
+        </button>
+       </div>
+      </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col"><b>Location Name</b></div>
+                <div class="col"><b>Location Address</b></div>
+                <div class="col"></div>
+            </div>
+            <div class="row border" style="height: 50px;" *ngFor="let location of locations|filter:searchText; let i=index">
+                <div class="col"><b>{{location.location_name}}</b></div>
+                <div class="col"><a style="color: #3d1cba;"><i class="bi bi-pin-map" ></i>{{location.address}}</a></div>
+                <div class="col">
+                   <div style="display: inline-block;text-align: center;">
+                    <a class="btn btn-default" href="/locations/{{location.id}}/edit">Edit Settings</a>
+                    <div ngbDropdown class="dropdown" style="float:right;margin-left: 3px;">
+                        <button ngbDropdownToggle class="btn btn-default" type="button" id="dropdownMenuButton1" aria-expanded="true">
+                           <span class="caret"></span>
+                        </button>                        
+                        <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                          <li><a type="button" class="btn" href="/locations/{{location.id}}/edit" >Edit Settings</a></li>
+                          <li><a type="button" class="btn" (click)="deleteLocation(location.id)" >Delete</a></li>
+                          <li><button type="button" class="btn" >View Details</button></li>
+                          <li><button type="button" class="btn" >Copy settings</button></li>
+                          <li><button type="button" class="btn" >Duplicate</button></li>
+                          <li><button type="button" class="btn" >Schedule</button></li>
+                          <li><button type="button" class="btn" >Approve Timesheets</button></li>
+                          <li><button type="button" class="btn" >Message All</button></li>
+                        </ul>
+                    </div>
+                  </div>
+
+                </div>
+            </div>
+       </div> 
+   </div>    
+</div>
+  
+</div>
+<style>
+  .nav {
+  display: inline !important;
+  }
+</style>
+<div class="section2"   [style.display]="showSection2 ? 'block' : 'none'">
+ 
+  <div class="row">   
+        <div class="col-md-3"> <!-- required for floating -->
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs tabs-left">
+            <li [ngClass]="{'active': tab.active}" *ngFor="let tab of tabs">
+              <a (click)="tabChange(tab)">{{tab.name}}</a>
+            </li>
+
+          </ul>
+        </div>
+        <!--General-->
+        <div class="col-md-9">
+          <div class="tab-content">
+            <div class="tab-pane active" [ngClass]="{'showTab':selectedUserTab == 1, 'hideTab':selectedUserTab != 1}"> <!-- Profile tab -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    </div> 
+                    <div class="panel-body">
+
+
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <div class="row form-group">
+                             <label>Name</label>
+                             <div class="col">
+                                 <input type="text" [(ngModel)]="location_name" class="form-control">
+                             </div>
+                            </div> 
+                            <div class="row form-group">
+                              <label>Location Code</label>
+                              <div class="col">
+                                  <input type="text" [(ngModel)]="location_code" class="form-control">
+                              </div>
+                             </div>    
+                             <div class="row">
+                              <label>Address</label>
+                              <div class="col">
+                                  <input type="text"  [(ngModel)]="address" class="form-control">
+                              </div>
+                             </div> 
+                             <div class="row">
+                              <label>TimeZone</label>
+                              <div class="col">
+                                <ng-multiselect-dropdown  
+                                [placeholder]="'Select a TimeZone'"
+                                [settings]="dropdownSettingsTimeZone"
+                                [data]="dropdownListTimeZone"
+                                [(ngModel)]="selectedItemsTimeZone"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                              </div>
+                             </div>       
+                          </div>                           
+                        </div>
+                        <div class="col">
+                          
+                        </div>
+                   </div>
+                   <h1>Operating hours</h1>
+                   <div class="row form-group">
+                    <div class="col">
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox" [(ngModel)]="monday" name="">Monday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListMon"
+                                [data]="dropdownTimeListMon"
+                                [(ngModel)]="selectedItemsTimeListMon"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListMon2"
+                          [data]="dropdownTimeListMon2"
+                          [(ngModel)]="selectedItemsTimeListMon2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox" [(ngModel)]="tuesday" name="">Tuesday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListTue"
+                                [data]="dropdownTimeListTue"
+                                [(ngModel)]="selectedItemsTimeListTue"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListTue2"
+                          [data]="dropdownTimeListTue2"
+                          [(ngModel)]="selectedItemsTimeListTue2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox"  [(ngModel)]="wednesday" name="">Wednesday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListWed"
+                                [data]="dropdownTimeListWed"
+                                [(ngModel)]="selectedItemsTimeListWed"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListWed2"
+                          [data]="dropdownTimeListWed2"
+                          [(ngModel)]="selectedItemsTimeListWed2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox"  [(ngModel)]="thursday" name="">Thursday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListThurs"
+                                [data]="dropdownTimeListThurs"
+                                [(ngModel)]="selectedItemsTimeListThurs"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListThurs2"
+                          [data]="dropdownTimeListThurs2"
+                          [(ngModel)]="selectedItemsTimeListThurs2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox"  [(ngModel)]="friday" name="">Friday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListFri"
+                                [data]="dropdownTimeListFri"
+                                [(ngModel)]="selectedItemsTimeListFri"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListFri2"
+                          [data]="dropdownTimeListFri2"
+                          [(ngModel)]="selectedItemsTimeListFri2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox"  [(ngModel)]="saturday" name="">Saturday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListSat"
+                                [data]="dropdownTimeListSat"
+                                [(ngModel)]="selectedItemsTimeListSat"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListSat2"
+                          [data]="dropdownTimeListSat2"
+                          [(ngModel)]="selectedItemsTimeListSat2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <input type="checkbox"  [(ngModel)]="sunday" name="">Sunday
+                        </div>                    
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                                [placeholder]="'Select Time'"
+                                [settings]="dropdownSettingsTimeListSun"
+                                [data]="dropdownTimeListSun"
+                                [(ngModel)]="selectedItemsTimeListSun"
+                                (onSelect)="onItemSelect($event)"
+                                (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                        </div>
+                        <div class="col">
+                          <ng-multiselect-dropdown  
+                          [placeholder]="'Select Time'"
+                          [settings]="dropdownSettingsTimeListSun2"
+                          [data]="dropdownTimeListSun2"
+                          [(ngModel)]="selectedItemsTimeListSun2"
+                          (onSelect)="onItemSelect($event)"
+                          (onSelectAll)="onSelectAll($event)">
+                          </ng-multiselect-dropdown>
+                        </div>                        
+                      </div>    
+                      <div class="row form-group">
+                        <div class="col">
+                          <h1>Notes</h1>                            
+                            <textarea [(ngModel)]="notes" placeholder="Notes" style="width: 100%;"></textarea>       
+                        </div>
+                      </div>   
+                      <div class="row">
+                        <div class="col" >
+                          <button type="button" class="btn btn-primary" style="float: right;" (click)="saveLocation()"><span *ngIf="location_id>0">Update</span> <span *ngIf="location_id==''">Save</span> </button>   
+                        </div>
+                      </div>
+                    </div>  
+                    <div class="col">
+                      
+                    </div> 
+                  </div>  
+                  
+                    
+                </div>
+            </div>
+            </div>
+            <!--Areas-->
+            <div class="tab-pane active" [ngClass]="{'showTab':selectedUserTab == 2, 'hideTab':selectedUserTab != 2}"> <!-- Change password tab -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    </div> 
+                    <div class="panel-body">
+                      <div class="card" style="width: 30rem;">
+                        <div class="row">                          
+                          <div class="col">
+                            <input type="text" [(ngModel)]="newArea" placeholder="New Department name" class="form-control">
+                          </div>
+                          <div class="col">
+                            <input type="color" [(ngModel)]="color_code" id="favcolor" name="favcolor" value="#ff0000">
+                           
+
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-success" (click)="saveArea()"><span *ngIf="area_id>0">Update</span> <span *ngIf="area_id==''">Save</span></button>
+                          </div>
+                        </div>
+                        <ul class="list-group list-group-flush"  *ngFor="let area of areas; let i=index">
+                        <li class="list-group-item">
+                          <div class="row">
+                            <div class="col"> {{area.area_name}}</div>
+                            <div class="col">  <span [style.background-color]="area.color_code">{{area.color_code}}</span></div>
+                            <div class="col"><button class="btn btn-primary" (click)="editArea(area.id)">Edit</button></div>
+                            <div class="col"><button class="btn btn-danger" (click)="deleteArea(area.id)">Delete</button></div>
+                        </div>   
+                        </li>                     
+                      </ul>
+                    </div>
+                        
+                    
+                    </div>  
+                </div>
+            </div>
+            <div class="tab-pane active" [ngClass]="{'showTab':selectedUserTab == 3, 'hideTab':selectedUserTab != 3}"> <!-- Change password tab -->
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                </div> 
+                <div class="panel-body">
+                   <div class="container">
+                    <h1>Basics</h1>
+                    <div class="row">
+                        <div class="col col-md-6">
+                             <label><strong>First day of week</strong></label>
+                             <p>This determines the start day of the schedule and also sets the default week period for 
+                              calculating weekly overtime.
+                             </p>
+                          </div>
+                        <div class="col col-md-6">
+                          <select [(ngModel)]="week_start" class="form-control">
+                            <option value="Mon">Mon</option>  
+                            <option value="Tue">Tue</option>  
+                            <option value="Wed">Wed</option>  
+                            <option value="Thu">Thu</option>  
+                            <option value="Fri">Fri</option>  
+                            <option value="Sat">Sat</option>  
+                            <option value="Sun">Sun</option>    
+                           </select>
+                        </div>
+                    </div>
+        
+                    <div class="row">
+                      <div class="col col-md-6">
+                           <label><strong>Default shift duration (hours)</strong></label>
+                           <p>Default shift length when creating shifts.
+                           </p>
+                        </div>
+                      <div class="col col-md-6">
+                        <input [(ngModel)]="ROSTER_DEFAULT_SHIFT_LEN" class="form-control">
+                      </div>
+                    </div> 
+        
+                    <div class="row">
+                      <div class="col col-md-6">
+                           <label><strong>Default break duration (minutes)</strong></label>
+                           <p>Default break length when creating shifts.
+                           </p>
+                        </div>
+                      <div class="col col-md-6">
+                        <select [(ngModel)]="DEFAULT_MEALBREAK_DURATION" class="form-control">                             
+                          <option value="{{duration}}"  *ngFor="let duration of durations ">{{duration}}</option> 
+                        </select>
+                      </div>
+                  </div> 
+                  <div class="row">
+                    <div class="col" >
+                      <button type="button" class="btn btn-primary" style="float: right;" (click)="saveShift()"><span *ngIf="location_id>0">Update</span> <span *ngIf="location_id==''">Save</span> </button>   
+                    </div>
+                  </div>
+                </div>   
+               </div>  
+              </div>
+            </div>
+
+          </div>
+        </div>      
+</div>      
+</div>   
+
+<!--Add a Location-->
+   <!-- The Modal -->
+   <div class="modal" id="modalMember"  [style.display]="showLocationModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add a Location
+          </h4>
+          <button type="button" class="close" data-dismiss="modal"  (click)="hideLocation()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="form-group">
+               <div class="row">
+                   <div class="col col-md-3">Location name</div>
+                   <div class="col"> <input type="text"  [(ngModel)]="location_name" id="location_name" class="form-control"></div>
+               </div>
+              </div> 
+              <div class="form-group">
+               <div class="row">
+                  <div class="col col-md-3">Location code</div>
+                  <div class="col"><input type="text"  [(ngModel)]="location_code" id="location_code" class="form-control"></div>
+                </div>
+               </div>
+            <div class="form-group">
+                  <div class="row">
+                    <div class="col col-md-3">Address</div>
+                    <div class="col"><input type="text"  [(ngModel)]="address" id="address"  class="form-control"></div>
+                  </div>
+            </div>
+
+          <div class="form-group">
+                <div class="row">
+                  <div class="col col-md-3">Timezone</div>
+                  <div class="col"> <ng-multiselect-dropdown  
+                    [placeholder]="'Select Time'"
+                    [settings]="dropdownSettingsTimeZone"
+                    [data]="dropdownListTimeZone"
+                    [(ngModel)]="selectedItemsTimeZone"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)">
+                    </ng-multiselect-dropdown></div>
+                  </div>
+
+                </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideLocation()">Close</button>
+          <input type="hidden"  [(ngModel)]="location_id">
+          <button type="button" class="btn btn-primary"  (click)="saveLocation()"><span *ngIf="location_id>0">Update</span> <span *ngIf="location_id==''">Save</span> </button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+<!-- Add a Location//-->
+
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+  <p style="color: white">Please Wait. </p>  
+</ngx-spinner>    

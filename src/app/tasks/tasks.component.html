@@ -1,0 +1,478 @@
+<style>
+  .btn-primary,.btn-danger{
+    color:none  !important;
+    background-color: #3d1cba;
+  }
+  .btn-primary,.btn-danger:hover{
+    color:none  !important;
+    background-color: #3d1cba;
+  }
+  .btn-primary,.btn-danger:active {
+    color:none  !important;
+    background-color: #3d1cba !important;
+  }
+  .modal-dialog {
+     max-width: 600px !important;
+    }
+  </style>
+
+   <div class="container">
+    <div class="row">
+        <div class="col col-md-10"><h1 class="u-bold m-title-left">Tasks</h1></div>
+        <div class="col">
+            <div ngbDropdown class="dropdown">
+                <button ngbDropdownToggle class="btn btn-primary" type="button" id="dropdownMenuButton1" aria-expanded="false">
+                    Add task  <span class="caret"></span>
+                </button>
+                <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                  <li><button type="button" class="btn" (click) = "showModalTasksForaWholeArea()">Tasks for a whole area</button></li>
+                  <li><button type="button" class="btn" (click) = "showModalIndividual('me')">A task for me</button></li>
+                  <li><button type="button" class="btn" (click) = "showModalIndividual('someone')">A task for someone else</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+  </div>
+
+    <div class="container">
+     <div class="row">
+          <div class="col">
+            <ng-multiselect-dropdown  
+                              [placeholder]="'Select a Location'"
+                              [settings]="dropdownSettingsScheLoc"
+                              [data]="dropdownListScheLoc"
+                              [(ngModel)]="selectedItemsScheLoc"
+                              (onSelect)="onItemSelect($event)"
+                              (onSelectAll)="onSelectAll($event)">
+                              </ng-multiselect-dropdown>
+          </div>
+          <div class="col">
+            <input class="form-control calendar" [(ngModel)]="individual_date"  placeholder="yyyy-mm-dd"
+            name="dp1"  ngbDatepicker #d2="ngbDatepicker" (click)="d2.toggle()" (navigate)="date = $event.next"> 
+          </div>
+          <div class="col">
+            <input type="search" [(ngModel)]="searchText" placeholder="Search for tasks, areas..." class="form-control">
+          </div>
+     </div>
+
+
+     <div class="card">
+      <div class="row border" style="height: 50px;">
+         <div class="col col-md-10"><a class="u-bold" (click)  ="showTaskListInModal('my_task');"><i class="bi bi-person"></i>My Tasks</a></div>
+         <div class="col">0 incompled</div>    
+      </div>
+      <div class="row border"  style="height: 50px;">
+        <div class="col  col-md-10"><a class="u-bold"  (click) ="showTaskListInModal('assigned');"><i class="bi bi-people"></i>Assigned Task</a></div>
+        <div class="col">0 incompled</div>
+     </div>
+    </div>
+    </div>
+
+ <!-- The Modal -->
+ <div class="modal" id="wholeAreaModal"  [style.display]="showModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add task
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" (click) = "hide()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+          <div class="row">
+             <div class="col">
+              <div class="form-group">
+                  <div class="row">
+                    <label for="Meal Break" class="col-md-12 control-label">Task</label>
+                    <div class="col-md-12">
+                        <input [(ngModel)]="task" id="task" placeholder="Please Input"  class="form-control">                          
+                    </div>
+                   </div>
+              </div>                      
+           </div> 
+          </div> 
+         
+
+          <div class="row">
+            <div class="col">
+             <div class="form-group"> 
+              <div class="row">
+                  <div class="col">
+                  SubTask
+                  </div>
+                  <div class="col">
+                    TimeRequired
+                  </div>
+              </div>    
+              <div [formGroup]="productForm"> 
+                <div  formArrayName="quantities">
+                <div  *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">  
+                  <div class="form-group"> 
+                  <div class="row">
+                  <div class="col">
+                    <div class="col-md-12">
+                        <input formControlName="subtask" id="subtask" placeholder="Please Input"  class="form-control">                          
+                    </div>
+                    </div>                 
+                  <div class="col">
+                    <div class="row">
+                      <div class="col">
+                      <input type="text"  formControlName="hr" id="hr" style="width: 40px;">hr
+                      </div>
+                      <div class="col">
+                        <input type="text"  formControlName="min" id="min"  style="width: 40px;">min
+                      </div>
+                      <div class="col">
+                        <button (click)="toggleNotes(i)">...</button>    <button (click)="removeQuantity(i)"><i class="fa fa-trash-o"></i>-</button>  
+                      </div>
+                    </div>
+                  </div>
+                  </div> 
+                  <div class="row"   [style.display]="showNotes[i] ? 'block' : 'none'">
+                    <div class="col">
+                      <textarea name="notes"  formControlName="notes"  style="width:100%;" placeholder="Notes"  class="form-control"></textarea>
+                    </div>
+                  </div>  
+                </div>
+              </div>
+            </div> 
+            </div>   
+
+             </div>                      
+          </div> 
+         </div> 
+
+         <div class="row">
+          <div class="col">
+              <button class="btn"  (click)="addQuantity()">+</button>
+          </div>
+         </div>   
+
+         <div class="row">
+          <div class="col">
+           <div class="form-group">            
+               <div class="row">
+               <div class="col">
+                 <div class="col-md-12">
+                    Total
+                 </div>
+                </div>                 
+               <div class="col">
+                 <div class="row">
+                  <div class="col">
+                   <input type="text" id="hr" style="width: 40px;">hr
+                   </div>
+                   <div class="col">
+                    <input type="text" id="min"  style="width: 40px;">min
+                   </div>
+                 </div>
+               </div>
+              </div>             
+           </div>                      
+        </div> 
+       </div> 
+
+
+         <div class="row">
+          <div class="col">
+           <div class="form-group">
+               <div class="row">
+                 <label for="Meal Break" class="col-md-12 control-label">Assignto</label>
+                 <div class="col-md-12">
+                   <select [(ngModel)]="assignto"  class="form-control">
+                    <option value="">Select</option> 
+                    
+                   </select>                   
+                 </div>
+                </div>
+           </div>                      
+        </div> 
+       </div> 
+
+       <div class="row">
+        <div class="col">
+         <div class="form-group">
+             <div class="row">
+               <label for="Start Time" class="col-md-12 control-label">Start Time</label>
+               <div class="col-md-12">
+                <select type="text" id="start_time" class="form-control">  
+                  <option value="12:00">12:00 AM</option>
+                  <option value="12:15">12:15 AM</option>
+                  <option value="12:30">12:30 AM</option>
+                  <option value="12:45">12:45 AM</option>
+                  <option value="1:00">1:00 PM</option>
+                  <option value="1:15">1:15 PM</option>
+                  <option value="1:30">1:30 PM</option>
+                  <option value="1:45">1:45 PM</option>
+                  <option value="2:00">2:00 PM</option>
+                </select>    
+               </div>
+              </div>
+         </div>                      
+      </div> 
+     </div> 
+
+
+     <div class="row">
+      <div class="col">
+       <div class="form-group">
+           <div class="row">
+             <label for="Repeat" class="col-md-12 control-label">Repeat</label>
+             <div class="col-md-12">
+              <select  [(ngModel)]="repeat_type"  id="repeat_type" (change)="repeatTypeChange()" class="form-control">  
+                <option value="Do not repeat">Don't repeat</option>
+                <option value="Daily">Daily</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>                
+              </select>    
+             </div>
+            </div>
+       </div>                      
+    </div> 
+   </div> 
+
+
+   <div class="row" [style.display]="dateShow? 'block' : 'none' ">
+    <div class="col">
+     <div class="form-group">
+         <div class="row">
+           <label for="Date" class="col-md-12 control-label">date</label>
+           <div class="col-md-12">
+            <input class="form-control calendar" [(ngModel)]="repeat_date"  placeholder="yyyy-mm-dd"
+            name="dp"  ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()" (navigate)="date = $event.next">  
+           <!-- <ngb-datepicker #dp [(ngModel)]="repeat_date" (navigate)="date = $event.next"></ngb-datepicker>--> 
+           </div>
+          </div>
+     </div>                      
+  </div> 
+ </div> 
+
+
+
+ <div class="row"  [style.display]="weeklyShow? 'block' : 'none' ">
+  <div class="col">
+   <div class="form-group">
+       <div class="row">
+         <label for="On" class="col-md-12 control-label">On</label>
+         <div class="col-md-12">
+          Mon <input type="checkbox" name="weekly_on">
+          Tue <input type="checkbox" name="weekly_on">
+          Wed <input type="checkbox" name="weekly_on">
+          Thu <input type="checkbox" name="weekly_on">
+          Fri <input type="checkbox" name="weekly_on">
+          Sat <input type="checkbox" name="weekly_on">
+          Sun <input type="checkbox" name="weekly_on">          
+         </div>
+        </div>
+   </div>                      
+</div> 
+</div> 
+
+
+<div class="row"   [style.display]="monthlyShow? 'block' : 'none' ">
+  <div class="col">
+   <div class="form-group">
+       <div class="row">
+         <label for="Dates" class="col-md-12 control-label">Dates</label>
+         <div class="col-md-12">
+          <ng-multiselect-dropdown  
+                [placeholder]="'Selected Day of a Month'"
+                [settings]="dropdownSettings"
+                [data]="dropdownList"
+                [(ngModel)]="selectedItems"
+                (onSelect)="onItemSelect($event)"
+                (onSelectAll)="onSelectAll($event)">
+          </ng-multiselect-dropdown>
+         </div>
+        </div>
+   </div>                      
+</div> 
+</div> 
+
+        
+          </div>
+          
+         <div class="row">  
+              <div class="col">
+              <div class="form-group">
+                  
+                 
+               </div>
+          </div>
+        </div>
+        <div class="row">     
+              <div class="col">
+                  <div class="form-group">
+                     
+                  </div>
+              </div>
+              <div class="col">
+                
+                <button type="submit" class="btn btn-danger" >Delete</button>
+             
+              </div>
+        </div> 
+      </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click) = "hide()">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-------Individual----->
+
+<!-- The Modal -->
+<div class="modal" id="individualModal"  [style.display]="showindividualModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add task
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" (click) = "hideIndividual()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+          <div class="row">
+             <div class="col">
+              <div class="form-group">
+                  <div class="row">
+                    <label for="Meal Break" class="col-md-12 control-label">Task</label>
+                    <div class="col-md-12">
+                        <input [(ngModel)]="task" id="task" placeholder="Please Input"  class="form-control">                          
+                    </div>
+                   </div>
+              </div>                      
+           </div> 
+          </div> 
+         
+          <div class="row">
+            <div class="col">
+            <div class="form-group">
+                <div class="row">
+                  <label for="Meal Break" class="col-md-12 control-label">Assignto</label>
+                  <div class="col-md-12">
+                    <ng-multiselect-dropdown  
+                            [placeholder]="'Select a Member'"
+                            [settings]="dropdownSettingsScheWho"
+                            [data]="dropdownListScheWho"
+                            [(ngModel)]="selectedItemsScheWho"
+                            (onSelect)="onItemSelect($event)"
+                            (onSelectAll)="onSelectAll($event)">
+                            </ng-multiselect-dropdown>             
+                  </div>
+                  </div>
+            </div>                      
+          </div> 
+          </div> 
+
+
+          <div class="row">
+            <div class="col">
+             <div class="form-group">
+                 <div class="row">
+                   <label for="Date" class="col-md-12 control-label">Date</label>
+                   <div class="col-md-12">
+                    <input class="form-control calendar" [(ngModel)]="individual_date"  placeholder="yyyy-mm-dd"
+                      name="dp1"  ngbDatepicker #d1="ngbDatepicker" (click)="d1.toggle()" (navigate)="date = $event.next">  
+        
+                   </div>
+                  </div>
+             </div>                      
+          </div> 
+         </div> 
+        
+         <div class="row">  
+          <div class="col">
+          <div class="form-group">
+              <label for="End Time" class="col-md-12 control-label">Notes</label>
+              <div class="col-md-12">
+                <textarea [(ngModel)]="notes" name="notes" [value]="" style="width:100%;" placeholder="Note"  class="form-control"></textarea>
+              </div>
+           </div>
+          </div>
+        </div>
+     
+
+        
+          </div>
+
+         
+        <div class="row">     
+              <div class="col">
+                  <div class="form-group">
+                     
+                  </div>
+              </div>
+              <div class="col">
+                
+                <button type="submit" class="btn btn-danger" >Delete</button>
+             
+              </div>
+        </div> 
+      </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click) = "hideIndividual()">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!--Modal List-->
+<!-- The Modal -->
+<div class="modal" id="listModal"  [style.display]="showListModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">{{task_list_title}}
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" (click) = "hideList()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+         
+        
+          </div>
+      </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click) = "hideList()">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+

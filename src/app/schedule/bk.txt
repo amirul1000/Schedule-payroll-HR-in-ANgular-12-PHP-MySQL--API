@@ -1,0 +1,99 @@
+        /*
+      document.addEventListener('DOMContentLoaded', function() {
+
+        var calendarEl = document.getElementById('calendar2') as HTMLElement;
+      
+        var calendar = new Calendar(calendarEl, {
+          schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+          initialView: "resourceTimelineDay",     
+          headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth,resourceTimelineYear'
+        },
+        editable: true,   
+        scrollTime: '08:00',
+        aspectRatio: 1.5,
+        views: {
+          resourceTimelineDay: {
+            slotDuration: '01:00',          
+          },    
+        },  
+          resources: [
+            {
+              id: "a",
+              title: "Phòng A rerererer yytytytyt"
+            },
+            {
+              id: "b",
+              title: "Phòng B"
+            },
+            {
+              id: "c",
+              title: "Phòng C"
+            }
+          ],
+          events: [
+            {
+              resourceId: "a",
+              title: "event 1",
+              data: {
+                full_name: "Nguyễn Hoàng Phúc",
+                date_of_birth: "28/09/1995",
+                gender: "Nam",
+                item_name: "Điều trị tủy răng và hàn kín hệ thống ống tủy bằng Gutta percha nguội (răng số 6, 7 hàm dưới)",
+                primary_sur_doctor_name: "Nguyễn Đăng Thu",
+                primary_anesthetic_doctor_name: "Bùi Trung Vang"
+              },
+              start: "2022-04-01 08:00",
+              end: "2022-04-01 10:30"
+            },
+            {
+              resourceId: "a",
+              title: "event 2",
+              start: "2022-04-01 10:30",
+              end: "2022-04-01 11:30",
+              color: "red"
+            },
+            {
+              resourceId: "c",
+              title: "event 3",
+              start: "2022-04-02 07:30",
+              end: "2022-04-05 12:00",
+              color: "blue"
+            }
+          ],
+         
+          dayCellDidMount: function(info) {
+
+            info.el.innerHTML = `<div class="shift-buttons"><div class="add-shift js-add-shift">+</div></div>`;
+            info.el.addEventListener('click',()=>{
+    
+              info.el.innerHTML = `<div>
+                                     <i class="bi bi-pencil-square" style="padding:5px;">
+                                     <i class="bi bi-plus-square" style="padding:5px;">  
+                                     <i class="bi bi-clipboard" style="padding:5px;">
+                                   </div>`;
+              
+            });
+    
+           info.el.addEventListener('mouseleave',()=>{
+    
+              info.el.innerHTML = `<div class="shift-buttons"><div class="add-shift js-add-shift">+</div></div>`;
+    
+              
+            });
+    
+          },
+
+
+
+
+         
+        });
+      
+        calendar.render();
+      });
+      */
+      
+     

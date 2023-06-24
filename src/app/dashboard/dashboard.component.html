@@ -1,0 +1,374 @@
+<div class="row">
+   <div class="col col-md-3">
+          <img [src]="file_picture" class="rounded-circle" style="width: 100px;">
+          <h3>{{first_name}} {{last_name}}</h3>
+         {{email}}
+        
+
+   </div>
+   <div class="col col-md-8" *ngIf="user_type!='Employee'">
+          <h3>Businesses</h3> <div *ngIf="business_name" (click)="toggleBusiness()">Current Business-{{business_name}}</div>
+          <div class="row">
+             <div class="col">
+
+              <button  type="button" class="btn btn-primary" style="float: right;"  (click)="showBusiness()">
+                <i class="bi bi-plus-square"></i>Add New Business
+              </button>  
+             </div>
+          </div>
+          <div [style.display]="business_display ? 'block' : 'none'">
+          <div class="card"   *ngFor="let each_business of business_list; let i=index">
+            <div class="card-header">
+              <input type="radio" [(ngModel)]="business_radio" name="business_radio" [checked]="each_business.id==selected_business_id" (click)="switchBusiness(each_business.id)">
+              <a class="u-bold">
+                {{each_business.business_name}}
+              </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <i class="bi bi-person"></i>{{each_business.users_total}}
+                    <i class="bi bi-pin-map"></i>{{each_business.location_total}}
+                  </div>
+                  <div class="col">
+                        <span (click)="editBusiness(each_business.id)"><i class="bi bi-pencil-square"></i> </span> 
+                        <span (click)="deleteBusiness(each_business.id)"><i class="bi bi-trash"></i></span>
+                  </div>
+              </div>   
+             </div>
+          </div>
+          </div>
+    
+   </div>
+
+
+
+   <!--Employee-->
+
+   <div class="col col-md-8" *ngIf="user_type=='Employee'">    
+
+    <div class="card">
+      <div class="card-header">
+        <a class="u-bold">
+          Task
+        </a>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col"   *ngFor="let task of tasks;">
+            <div  style="width:100px;height: auto;border:1px solid;">
+              Start: {{task.start}}<br>
+              End: {{task.end}}<br>
+              Title: {{task.title}}<br>
+             </div>
+          </div>
+            
+        </div>
+      </div>
+    </div> 
+  
+
+    
+      <div class="row"    *ngFor="let payroll of payrolls; let i=index">
+        
+        <a (click)="toggleShow(i)"> <h3> Payroll ID : {{payroll.payroll[0].Payroll_ID}}  </h3> </a>
+
+          <div class="col" *ngIf="isShown[i]"> 
+        
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Payroll
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{payroll.payroll[0].employee_start_date}} </div>
+                      <div class="col"> {{payroll.payroll[0].employeement_type}} </div>
+                      <div class="col"> {{payroll.payroll[0].overtime_rate}} </div>                   
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Location
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachlocation of payroll.location; let i=index">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachlocation.location_name}} </div>
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Leave Apply <button  type="button" class="btn btn-primary"  (click)="showLeave(payroll.payroll[0].id)">
+                  <i class="bi bi-plus-square"></i>Apply for Leave
+                </button>
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachleave of payroll.leave_apply;">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachleave.start_date}} </div>
+                      <div class="col"> {{eachleave.end_date}} </div>
+                      <div class="col"> {{eachleave.leave_type}} </div>      
+                      <div class="col"> {{eachleave.status}} </div>    
+                      <div class="col">
+                        <button (click)="deleteLeaveApply(eachleave.id)"><i class="bi bi-trash3"></i></button>  
+                      </div>             
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Leave  
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachleave of payroll.leave;">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachleave.start_date}} </div>
+                      <div class="col"> {{eachleave.end_date}} </div>
+                      <div class="col"> {{eachleave.leave_type}} </div>                   
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+         
+
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Training
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachtraining of payroll.training;">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachtraining.training_type}} </div>
+                      <div class="col"> {{eachtraining.renewal_date}} </div>
+                      <div class="col"> {{eachtraining.notes}} </div>
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+          <div class="card">
+            <div class="card-header">
+              <a class="u-bold">
+                Unavailability
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <ul class="list-group list-group-flush"  *ngFor="let eachunavailability of payroll.unavailability;">
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col"> {{eachunavailability.start_date}} </div>
+                      <div class="col"> {{eachunavailability.end_date}} </div>
+                      <div class="col"> {{eachunavailability.repeat_type}} </div>
+                      <div class="col"> 
+                          <span *ngIf="eachunavailability.Mon==1">Mon </span>
+                          <span *ngIf="eachunavailability.Tue==1">Tue </span>
+                          <span *ngIf="eachunavailability.Wed==1">Wed </span>
+                          <span *ngIf="eachunavailability.Thu==1">Thu </span>
+                          <span *ngIf="eachunavailability.Fri==1">Fri </span>
+                          <span *ngIf="eachunavailability.Sat==1">Sat </span>
+                          <span *ngIf="eachunavailability.Sun==1">Sun </span>
+                      </div>
+                  </div>   
+                  </li>                     
+                </ul>
+              </div>
+            </div>
+          </div> 
+
+
+        </div>
+
+      </div>
+
+
+   </div>   
+
+</div>
+
+
+ <!-- The Modal -->
+ <div class="modal" id="modalMember"  [style.display]="showBusinessModal ? 'block' : 'none'">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Add a Business
+            </h4>
+            <button type="button" class="close" data-dismiss="modal"  (click)="hideBusiness()">&times;</button>
+          </div>
+          
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-body">
+  
+                <div class="form-group">
+                 <div class="row">
+                     <div class="col col-md-3">Business name</div>
+                     <div class="col"> <input type="text"  [(ngModel)]="business_name" id="business_name" class="form-control"></div>
+                 </div>
+                </div> 
+                <div class="form-group">
+                  <div class="row">
+                      <div class="col col-md-3">Time zone</div>
+                      <div class="col">  <ng-multiselect-dropdown  
+                        [placeholder]="'Select Time'"
+                        [settings]="dropdownSettingsTimeZone"
+                        [data]="dropdownListTimeZone"
+                        [(ngModel)]="selectedItemsTimeZone"
+                        (onSelect)="onItemSelect($event)"
+                        (onSelectAll)="onSelectAll($event)">
+                        </ng-multiselect-dropdown></div>
+                  </div>
+                 </div> 
+                <div class="form-group">
+                 <div class="row">
+                  <div class="col col-md-3">Address</div>
+                  <div class="col"><input type="text"  [(ngModel)]="address" id="address" class="form-control"></div>
+                 </div>
+                 </div>
+                  
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideBusiness()">Close</button>
+            <button type="button" class="btn btn-primary"  (click)="saveBusiness()"><span *ngIf="business_id>0">Update</span> <span *ngIf="business_id==''">Save</span> </button>
+          </div>
+          
+        </div>
+      </div>
+ </div>
+
+
+
+ <!-- The Modal -->
+<div class="modal" id="modalLeave"  [style.display]="showmodalLeave ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Apply for Leave</h4>         
+        <button type="button" class="close" data-dismiss="modal"  (click)="hideLeave()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body"> 
+                  <!--leave-->
+                 
+        
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col">
+                          Start date
+                        </div>
+                        <div class="col">
+                          <input class="form-control calendar"   [(ngModel)]="leave_start_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d3="ngbDatepicker" (click)="d3.toggle()" (navigate)="date = $event.next" > 
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          End date
+                        </div>
+                        <div class="col">
+                          <input class="form-control calendar"   [(ngModel)]="leave_end_date"  placeholder="yyyy-mm-dd"
+                            name="dp"  ngbDatepicker #d4="ngbDatepicker" (click)="d4.toggle()" (navigate)="date = $event.next" > 
+                        </div>
+                      </div>
+                      <div class="row">
+                      <div class="col">
+                        Leave
+                      </div>
+                      <div class="col">
+                        <select  [(ngModel)]="leave_type"  class="form-control">
+                          <option value="Annual Leave (Vacation)">Annual Leave (Vacation)</option>
+                          <option value="Bereavement (Compassionate) Leave">Bereavement (Compassionate) Leave</option>
+                          <option value="Community Service Leave">Community Service Leave</option>
+                          <option value="Long Service Leave">Long Service Leave</option>
+                          <option value="Other Paid Leave">Other Paid Leave</option>
+                          <option value="Sick (Personal/Carer's) Leave">Sick (Personal/Carer's) Leave</option>
+                          <option value="Time Off In Lieu">Time Off In Lieu</option>
+                          <option value="Unpaid Leave - Leave">Unpaid Leave - Leave</option>
+                          <option value="Unpaid Leave - No Show">Unpaid Leave - No Show</option>
+                          <option value="Unpaid Leave - Sick">Unpaid Leave - Sick</option>
+                          
+                        </select>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        <div class="col">
+                          <button type="button" class="btn btn-success"  (click)="saveLeaveApply()"><span *ngIf="leave_id>0">Update</span> <span *ngIf="leave_id==''">Save</span> </button>
+                      </div>
+                    </div>
+                  
+                  </div>     
+        
+                
+                  <!--//-->
+
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+ 
+
+    
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+  <p style="color: white">Please Wait. </p>  
+</ngx-spinner>    

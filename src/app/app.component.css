@@ -1,0 +1,84 @@
+body {
+    color: #1e163c;
+    font-family: "Segoe UI","acumin-pro",sans-serif,"Roboto",Helvetica,Arial;
+    font-size: 14px;
+    line-height: 22px;
+    hyphens: auto;
+    word-wrap: break-word;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+
+.btn.btn-default, .ui-dialog .btn {
+    color: #3d1cba;
+    border: 0;
+    background-color: rgba(235,233,248,0.6);
+}
+
+.link {
+    color: #3d1cba;;
+    cursor: pointer;
+}
+
+.form-group {
+    margin: 15px !important;
+}
+
+strong {
+    font-weight: 600;
+    line-height: 1em;
+}
+
+label {
+    display: inline-block;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+label {
+    font-weight: inherit;
+    margin-bottom: 0;
+}
+
+
+
+
+
+.sidebar-nav ul li a {
+    font-size: 26px;
+    text-decoration: none;
+    display: block;
+    padding: 6px 10px;
+    transition: 0.5s;
+}
+.sidebar-nav ul li a:hover {
+    background-color: #eeeeee;
+    border-radius: 4px;
+}
+.sidebar-nav .offcanvas {
+    width: 220px;
+    border: none;
+}
+.sidebar-nav .offcanvas ul li a span {
+    font-size: 18px;
+    position: relative;
+    top: -4px;
+    transition: 0.5s;
+}
+.sidebar-nav .offcanvas.show ul li a:hover span {
+    padding-right: 10px;
+}
+.sidebar-nav .dropdown-toggle::after {
+    position: relative;
+    top: 3px;
+}
+.bi::before, [class^="bi-"]::before, [class*=" bi-"]::before
+{
+    margin-right: 5px;
+}

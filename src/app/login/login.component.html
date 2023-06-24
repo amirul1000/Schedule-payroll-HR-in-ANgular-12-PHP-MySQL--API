@@ -1,0 +1,127 @@
+<!-- https://www.positronx.io/angular-google-social-login-tutorial-with-example/-->
+<style>
+   .btn.btn-primary{
+    background: #3d1cba;
+    width: 100%;
+   }
+   .btn.btn-primary:hover {
+    background: #512bdf;
+    color: #fff;
+   }
+   .btn.btn-danger{
+    width: 100%;
+   }
+</style>
+<div class="container">
+<div class="row">
+   <div class="col col-md-8 col-sm-12 ">
+            <!--Slide-->
+            <div class="row">
+            <img alt="Random third slide" src="https://picsum.photos/id/984/900/500" class="img-responsive">
+            </div>
+            <!--Slide/-->
+   </div>
+   <div class="col col-md-4 col-sm-12">
+  
+      <!--Login-->
+      <div class="card">
+        <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <div class="form-group"  *ngIf="isLoggedin === false">
+                <div class="row">
+                  {{error}}
+                </div>
+                <div class="row">
+                    <div class="col-md-12">                    
+                      <label for="Task" class="col-md-12 control-label">Username or Email</label>
+                      <div class="col-md-12"> 
+                      <input type="text" [(ngModel)]="email"  class="form-control">
+                      </div>
+                   </div> 
+                </div>
+                <div class="row">
+                  <div class="col-md-12"> 
+                      <label for="area_name" class="col-md-12 control-label">Password</label>
+                      <div class="col-md-12">                  
+                        <input type="password" [(ngModel)]="password"  class="form-control">
+                      </div>   
+                  </div> 
+                </div>   
+                <div class="row">
+                    <div class="col-md-12">                     
+                          <button type="submit" class="btn btn-primary"  (click)="logIn()">Log  In</button>
+                    </div> 
+                </div>   
+                <div class="row" *ngIf="isLoggedin === false">
+                  <div class="col-md-12">                     
+                        <button type="submit" style="width: 100%;" class="btn btn-secondary"  (click)="showRegister()">Register</button>
+                  </div> 
+                </div>   
+              </div>  
+                
+                <div class="row">
+                  <div class="col-md-12">   
+                      <div *ngIf="isLoggedin === false">
+                        <div>
+                          <button type="button" (click)="loginWithGoogle()" class="btn btn-danger">Login with Google</button>
+                        </div>
+                      </div>
+                      <button type="button" (click)="logOut()" class="btn btn-primary" *ngIf="isLoggedin === true">Log Out</button>
+                  </div>
+               </div>
+            
+            </div>                      
+        </div> 
+        </div> 
+      </div>
+      <!--Login\-->
+   </div>
+</div>
+</div>
+
+
+
+ <!-- The Modal -->
+ <div class="modal" id="modalMember"  [style.display]="showRegisterModal ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Register
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"  (click)="hideRegister()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+
+            <div class="form-group">
+             <div class="row">
+                 <div class="col col-md-3">UserName(Email)</div>
+                 <div class="col"> <input type="text"  [(ngModel)]="reg_email" id="reg_email" class="form-control"></div>
+             </div>
+            </div> 
+            <div class="form-group">
+             <div class="row">
+              <div class="col col-md-3">Password</div>
+              <div class="col"><input type="password"  [(ngModel)]="reg_password" id="reg_password" class="form-control"></div>
+             </div>
+             </div>
+              
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary"  (click)="register()">Register</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hideRegister()">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>

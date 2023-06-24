@@ -1,0 +1,114 @@
+<div class="container">
+    <div class="row">
+        <div class="ccol">
+
+
+            <div class="card shadow">
+                <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                <div class="col">
+                    <label>First name</label>
+                    <input type="text"  [(ngModel)]="first_name" id="first_name"  class="form-control">
+                </div>
+                <div class="col">
+                    <label>Last name</label>
+                    <input type="text"  [(ngModel)]="last_name" id="last_name"  class="form-control">
+                </div>
+
+            </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    
+                <div class="col"><label>Email</label><input type="text"  [(ngModel)]="email" id="email"  class="form-control">
+                </div>
+                    
+                <div class="col"><label>Phone no</label><input type="text"  [(ngModel)]="phone_no" id="phone_no"  class="form-control">
+                </div>
+
+            </div>
+            </div>
+
+            </div>
+        </div>
+    
+
+        <div class="card shadow">
+            <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                   
+                <div class="col"> <label>Date of Birth</label>
+                    <input class="form-control calendar" [(ngModel)]="date_of_birth"  placeholder="yyyy-mm-dd"
+                    name="dp1"  ngbDatepicker #d1="ngbDatepicker" (click)="d1.toggle()" (navigate)="date = $event.next">  
+                </div>
+               
+                   
+                <div class="col"> <label>Gender</label><input type="text"  [(ngModel)]="gender" id="gender"  class="form-control"></div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    
+                <div class="col"><label>Profile Picture</label><input type="file"  [(ngModel)]="file_picture" id="file_picture"  class="form-control"></div>
+               
+                    
+                <div class="col"><label>Address</label><textarea  [(ngModel)]="address" id="address"  class="form-control"></textarea>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                   
+                <div class="col"> <label>City</label><input type="text"  [(ngModel)]="city" id="city"  class="form-control"></div>
+                
+                    
+                <div class="col"><label>Country</label><input type="text"  [(ngModel)]="country" id="country"  class="form-control"></div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    
+                <div class="col"><label>Postcode</label><input type="text"  [(ngModel)]="postcode" id="postcode"  class="form-control"></div>
+                          
+                <div class="col">
+                </div>
+
+            </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    
+                <div class="col"></div>
+                          
+                <div class="col">
+                    <button type="button" class="btn btn-danger" (click)="updateProfile()">Update</button>
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    </div>
+</div>
+</div>
+
+
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+    <p style="color: white">Please Wait. </p>  
+</ngx-spinner>    
