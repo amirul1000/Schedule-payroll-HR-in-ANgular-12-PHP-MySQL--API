@@ -29,3 +29,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 
 https://youtu.be/RszMHgC53Lk
+
+<img src="1.png">
+<img src="2.png">
+<img src="3.png">
+<img src="4.png">
+
